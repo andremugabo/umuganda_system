@@ -56,7 +56,7 @@ public class Users extends AbstractBaseEntity {
     private String otpPurpose;
 
     @Column(name = "otp_expires_at")
-    private LocalDateTime otpExpiresAt;
+    private LocalDateTime otpExpiresAt = LocalDateTime.now().plusMinutes(10);
 
     @Column(name = "is_verified", nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
     private boolean verified = false;

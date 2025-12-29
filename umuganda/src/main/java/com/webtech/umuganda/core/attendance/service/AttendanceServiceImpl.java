@@ -29,6 +29,22 @@ public class AttendanceServiceImpl implements AttendanceService {
         dto.setUserId(entity.getUser().getId());
         dto.setUmugandaId(entity.getUmuganda().getId());
         dto.setAttendance(entity.getAttendance());
+
+        // Add location from Umuganda event
+        if (entity.getUmuganda() != null && entity.getUmuganda().getLocation() != null) {
+            dto.setLocationId(entity.getUmuganda().getLocation().getId());
+        }
+
+        // Add user full name
+        if (entity.getUser() != null) {
+            dto.setUserName(entity.getUser().getFirstName() + " " + entity.getUser().getLastName());
+        }
+
+        // Add event description
+        if (entity.getUmuganda() != null) {
+            dto.setEventDescription(entity.getUmuganda().getDescription());
+        }
+
         return dto;
     }
 

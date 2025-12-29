@@ -17,5 +17,10 @@ public class AttendanceDto {
     private UUID id;
     private UUID userId;
     private UUID umugandaId;
+    private UUID locationId; // Location from the Umuganda event
     private EAttendance attendance;
+
+    // Additional fields for frontend display
+    private String userName; // Full name of the user
+    private String eventDescription; // Description of the Umuganda event
 }

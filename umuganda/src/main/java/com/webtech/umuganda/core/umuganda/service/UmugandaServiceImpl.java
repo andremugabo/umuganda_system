@@ -1,15 +1,23 @@
 package com.webtech.umuganda.core.umuganda.service;
 
+import com.webtech.umuganda.core.attendance.model.Attendance;
+import com.webtech.umuganda.core.attendance.repository.AttendanceRepository;
 import com.webtech.umuganda.core.location.repository.LocationRepository;
+import com.webtech.umuganda.core.notification.model.Notification;
+import com.webtech.umuganda.core.notification.repository.NotificationRepository;
 import com.webtech.umuganda.core.umuganda.dto.UmugandaDto;
 import com.webtech.umuganda.core.umuganda.model.Umuganda;
 import com.webtech.umuganda.core.umuganda.repository.UmugandaRepository;
-import com.webtech.umuganda.core.umuganda.service.UmugandaService;
+import com.webtech.umuganda.core.user.model.Users;
+import com.webtech.umuganda.core.user.repository.UsersRepository;
+import com.webtech.umuganda.util.enums.attendance.EAttendance;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -20,6 +28,9 @@ public class UmugandaServiceImpl implements UmugandaService {
 
     private final UmugandaRepository repository;
     private final LocationRepository locationsRepository;
+    private final UsersRepository usersRepository;
+    private final AttendanceRepository attendanceRepository;
+    private final NotificationRepository notificationRepository;
 
     private UmugandaDto mapToDto(Umuganda entity) {
         UmugandaDto dto = new UmugandaDto();
@@ -44,8 +55,44 @@ public class UmugandaServiceImpl implements UmugandaService {
     }
 
     @Override
+    @Transactional
     public UmugandaDto createUmuganda(UmugandaDto dto) {
         Umuganda saved = repository.save(mapToEntity(dto));
+
+        // Create attendance records and notifications for all users in the same
+        // location
+        if (saved.getLocation() != null) {
+            List<Users> usersInLocation = usersRepository.findByLocationId(saved.getLocation().getId());
+
+            // Format the date for notification message
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy 'at' HH:mm", Locale.ENGLISH);
+            String formattedDate = saved.getDate().format(formatter);
+            String locationName = saved.getLocation().getName();
+
+            // Create notification message
+            String notificationMessage = String.format(
+                    "New Umuganda event scheduled for %s: %s. Location: %s",
+                    formattedDate,
+                    saved.getDescription(),
+                    locationName);
+
+            for (Users user : usersInLocation) {
+                // Create attendance record
+                Attendance attendance = new Attendance();
+                attendance.setUser(user);
+                attendance.setUmuganda(saved);
+                attendance.setAttendance(EAttendance.ABSENT);
+                attendanceRepository.save(attendance);
+
+                // Create notification
+                Notification notification = new Notification();
+                notification.setUser(user);
+                notification.setMessage(notificationMessage);
+                notification.setRead(false);
+                notificationRepository.save(notification);
+            }
+        }
+
         return mapToDto(saved);
     }
 

@@ -54,19 +54,16 @@ public class UsersController {
         return ResponseEntity.noContent().build();
     }
 
-    @Operation(summary = "Verify a user's email using OTP",
-            description = "This endpoint verifies a user's email using a one-time password sent via email.")
+    @Operation(summary = "Verify a user's email using OTP", description = "This endpoint verifies a user's email using a one-time password sent via email.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "User verified successfully or already verified"),
             @ApiResponse(responseCode = "400", description = "Invalid or expired OTP or user not found")
     })
     @GetMapping("/verify")
     public ResponseEntity<String> verifyUser(
-            @Parameter(description = "User's email address", required = true)
-            @RequestParam String email,
+            @Parameter(description = "User's email address", required = true) @RequestParam String email,
 
-            @Parameter(description = "OTP sent to the user's email", required = true)
-            @RequestParam String otp) {
+            @Parameter(description = "OTP sent to the user's email", required = true) @RequestParam String otp) {
 
         String result = usersService.verifyUser(email, otp);
         if (result.equals("User verified successfully") || result.equals("User already verified")) {
@@ -74,5 +71,35 @@ public class UsersController {
         } else {
             return ResponseEntity.badRequest().body(result);
         }
+    }
+
+    @Operation(summary = "Initiate password reset")
+    @PostMapping("/forgot-password")
+    public ResponseEntity<String> forgotPassword(@RequestParam String email) {
+        try {
+            usersService.forgotPassword(email);
+            return ResponseEntity.ok("If an account exists with this email, an OTP has been sent.");
+        } catch (Exception e) {
+            e.printStackTrace(); // Log to server console
+            return ResponseEntity.internalServerError().body("Error: " + e.getMessage());
+        }
+    }
+
+    @Operation(summary = "Verify password reset OTP")
+    @PostMapping("/verify-reset-otp")
+    public ResponseEntity<String> verifyResetOtp(@RequestParam String email, @RequestParam String otp) {
+        if (usersService.verifyForgotPasswordOtp(email, otp)) {
+            return ResponseEntity.ok("OTP verified successfully");
+        } else {
+            return ResponseEntity.badRequest().body("Invalid or expired OTP");
+        }
+    }
+
+    @Operation(summary = "Reset password")
+    @PostMapping("/reset-password")
+    public ResponseEntity<String> resetPassword(@RequestParam String email, @RequestParam String otp,
+            @RequestParam String newPassword) {
+        usersService.resetPassword(email, otp, newPassword);
+        return ResponseEntity.ok("Password reset successfully");
     }
 }

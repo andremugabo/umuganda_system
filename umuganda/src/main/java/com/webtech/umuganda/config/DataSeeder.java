@@ -26,6 +26,8 @@ public class DataSeeder {
 
     private void seedAdminUser() {
         String adminEmail = "muhimpundumamy@gmail.com";
+        String adminPassword = PasswordUtil.hashPassword("123456");
+
         Optional<Users> existingAdmin = usersRepository.findByEmail(adminEmail);
 
         if (existingAdmin.isEmpty()) {
@@ -33,15 +35,19 @@ public class DataSeeder {
             admin.setFirstName("Admin");
             admin.setLastName("System");
             admin.setEmail(adminEmail);
-            admin.setPassword(PasswordUtil.hashPassword("12345678"));
-            admin.setPhone("0780000000"); // Placeholder phone
+            admin.setPassword(adminPassword);
+            admin.setPhone("0780000000");
             admin.setRole(ERole.ADMIN);
-            admin.setVerified(true); // Pre-verify the admin
-
+            admin.setVerified(true);
             usersRepository.save(admin);
-            System.out.println("Admin user seeded successfully: " + adminEmail);
+            System.out.println("Admin user seeded: " + adminEmail);
         } else {
-            System.out.println("Admin user already exists, skipping seeding.");
+            // Always sync password to avoid stale hash on restart
+            Users admin = existingAdmin.get();
+            admin.setPassword(adminPassword);
+            admin.setVerified(true);
+            usersRepository.save(admin);
+            System.out.println("Admin password synced for: " + adminEmail);
         }
     }
 }

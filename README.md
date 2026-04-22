@@ -30,6 +30,15 @@ The **Umuganda Management System** is a comprehensive digital platform designed 
 - **Citizen Engagement**: Automated email and internal system notifications for upcoming events and announcements.
 - **Leader Alerts**: Real-time updates for administrative actions and task assignments.
 
+### Advanced Geographic Intelligence
+- **Interactive Spatial Mapping**: Real-time visualization of community activities across Rwanda using Leaflet.js.
+- **Spatial Fallbacks**: Robust coordinate systems ensuring map stability across all administrative levels.
+
+### Professional Reporting Engine
+- **Branded PDF Summaries**: Professional, board-ready activity summaries for both citizens and administrators.
+- **Data Export**: Registry exports in CSV format for offline administrative analysis.
+
+
 ---
 
 ## Technology Stack
@@ -74,7 +83,46 @@ The **Umuganda Management System** is a comprehensive digital platform designed 
 
 ---
 
+## System Walkthrough & Visuals
+
+Experience the intuitive and modern interface designed for both administrators and citizens.
+
+### **1. Admin Intelligence Dashboard**
+A powerful oversight portal featuring real-time statistics, registration trends, and geographic distribution mapping of community activities.
+![Admin Dashboard](screenshort/AdminDashboard.png)
+
+### **2. Personalized Villager Experience**
+A clean, focused dashboard for citizens to view their upcoming Umuganda tasks and track their personalized attendance history.
+![Villager Dashboard](screenshort/VillagerDashboard.png)
+
+### **3. Collaborative Umuganda Management**
+Tools for leaders to schedule, describe, and coordinate community work events across different administrative levels.
+![Umuganda Management](screenshort/AdminUmugandaManagement.png)
+
+### **4. Digital Attendance Tracking**
+Automated record-keeping system with filtering and CSV/PDF export capabilities for verified participation history.
+![Attendance Management](screenshort/AdminAttendance.png)
+
+### **5. Hierarchical Location Governance**
+Management of Rwanda's administrative hierarchy, ensuring tasks and leaders are perfectly aligned with their specific villages.
+![Location Management](screenshort/AdminLocation.png)
+
+### **6. Unified Citizen Registry**
+Secure and efficient management of user profiles, role assignments, and location-based administration.
+![User Management](screenshort/Adminusermanagement.png)
+
+### **7. Enterprise Audit Trail**
+Complete accountability through a dedicated portal tracking every administrative action and system change.
+![System Audit Logs](screenshort/SystemAuditLog.png)
+
+### **8. Interactive API Ecosystem (Swagger)**
+Fully documented backend with interactive Swagger UI, allowing developers to explore and test endpoints in real-time.
+![Swagger Documentation](screenshort/Swagger.png)
+
+---
+
 ## Getting Started
+
 
 ### Prerequisites
 - JDK 17 or higher
@@ -109,6 +157,18 @@ The system uses environment variables for flexible configuration. You can custom
 | `VITE_API_BASE_URL` | Frontend API endpoint | `https://umuganda-backend-k32m.onrender.com/api` |
 
 ---
+
+## Advanced Modernization (v2.0 Highlights)
+
+The system recently underwent a comprehensive modernization phase to meet enterprise SaaS standards:
+
+- **Progressive Web App (PWA)**: Fully installable as a native app on iOS, Android, and Desktop with offline capability for field workers.
+- **Skeleton UI Architecture**: Implemented shimmer loading states across all dashboards to eliminate layout shift and improve perceived performance.
+- **Enterprise Audit Trail**: A dedicated, paginated system oversight portal that tracks every administrative action for total accountability.
+- **Role-Based Navigation (RBAC)**: Intelligent Topbar and Sidebar components that dynamically adapt their interface and security gates based on the authenticated user role.
+
+---
+
 
 ## Technical Architecture
 

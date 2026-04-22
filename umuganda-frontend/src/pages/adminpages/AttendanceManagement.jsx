@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Pagination from '../../components/ui/Pagination';
 import {
     CheckSquare,
     Search,
@@ -27,6 +28,10 @@ const AttendanceManagement = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState('ALL');
+
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
 
     useEffect(() => {
         fetchInitialData();
@@ -133,6 +138,12 @@ const AttendanceManagement = () => {
 
         return matchesSearch && matchesStatus;
     });
+
+    // Compute current page slice — reset on filter changes via dependency
+    const paginatedRecords = filteredRecords.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
+    );
 
     const stats = {
         total: attendanceRecords.length,
@@ -273,7 +284,7 @@ const AttendanceManagement = () => {
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-50">
-                                    {filteredRecords.map((record) => {
+                                    {paginatedRecords.map((record) => {
                                         const user = users[record.userId];
                                         if (!user) return null;
 
@@ -325,6 +336,16 @@ const AttendanceManagement = () => {
                                     <p>No attendance records found.</p>
                                 </div>
                             )}
+                        </div>
+                        {/* Pagination */}
+                        <div className="border-t border-gray-50 px-4">
+                            <Pagination
+                                currentPage={currentPage}
+                                totalItems={filteredRecords.length}
+                                itemsPerPage={itemsPerPage}
+                                onPageChange={setCurrentPage}
+                                onItemsPerPageChange={(val) => { setItemsPerPage(val); setCurrentPage(1); }}
+                            />
                         </div>
                     </div>
                 </>

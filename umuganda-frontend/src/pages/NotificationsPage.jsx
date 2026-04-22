@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Pagination from '../components/ui/Pagination';
 import { Bell, Check, CheckCheck, Trash2, Loader2, Filter } from 'lucide-react';
 import notificationService from '../services/notificationService';
 import { toast } from 'react-toastify';
@@ -8,6 +9,10 @@ const NotificationsPage = () => {
     const [filteredNotifications, setFilteredNotifications] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [filter, setFilter] = useState('ALL'); // ALL, UNREAD, READ
+
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
 
     const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
 
@@ -40,7 +45,14 @@ const NotificationsPage = () => {
             filtered = notifications.filter(n => n.read);
         }
         setFilteredNotifications(filtered);
+        setCurrentPage(1); // Reset to first page on filter change
     };
+
+    // Calculate pagination slice
+    const paginatedNotifications = filteredNotifications.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
+    );
 
     const handleMarkAsRead = async (id) => {
         try {
@@ -180,7 +192,7 @@ const NotificationsPage = () => {
                     </div>
                 ) : (
                     <div className="divide-y divide-gray-50">
-                        {filteredNotifications.map((notification) => (
+                        {paginatedNotifications.map((notification) => (
                             <div
                                 key={notification.id}
                                 className={`p-6 hover:bg-gray-50 transition-colors group ${!notification.read ? 'bg-blue-50/30' : ''
@@ -219,6 +231,19 @@ const NotificationsPage = () => {
                                 </div>
                             </div>
                         ))}
+                    </div>
+                )}
+                
+                {/* Pagination Controls */}
+                {filteredNotifications.length > 0 && (
+                    <div className="border-t border-gray-50 px-4">
+                        <Pagination
+                            currentPage={currentPage}
+                            totalItems={filteredNotifications.length}
+                            itemsPerPage={itemsPerPage}
+                            onPageChange={setCurrentPage}
+                            onItemsPerPageChange={setItemsPerPage}
+                        />
                     </div>
                 )}
             </div>

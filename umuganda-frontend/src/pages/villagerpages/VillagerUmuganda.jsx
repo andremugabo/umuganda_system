@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Pagination from '../../components/ui/Pagination';
 import { useSelector } from 'react-redux';
 import {
     Calendar,
@@ -20,6 +21,9 @@ const VillagerUmuganda = () => {
     const [attendanceMap, setAttendanceMap] = useState({});
     const [locationMap, setLocationMap] = useState({});
     const [isLoading, setIsLoading] = useState(true);
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(5);
 
     useEffect(() => {
         if (user?.id && user?.locationId) {
@@ -57,6 +61,7 @@ const VillagerUmuganda = () => {
                 .filter(event => new Date(event.date) > now)
                 .sort((a, b) => new Date(a.date) - new Date(b.date));
             setUpcomingEvents(upcoming);
+            setCurrentPage(1); // Reset to first page on data reload
 
             // Build attendance map
             const attMap = {};
@@ -127,6 +132,12 @@ const VillagerUmuganda = () => {
         );
     };
 
+    // Calculate pagination slice
+    const paginatedEvents = upcomingEvents.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
+    );
+
     if (isLoading) {
         return (
             <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
@@ -152,8 +163,9 @@ const VillagerUmuganda = () => {
 
             {/* Events List */}
             {upcomingEvents.length > 0 ? (
-                <div className="grid grid-cols-1 gap-6">
-                    {upcomingEvents.map((event) => {
+                <div className="space-y-6">
+                    <div className="grid grid-cols-1 gap-6">
+                        {paginatedEvents.map((event) => {
                         const eventDate = new Date(event.date);
                         const isThisWeek = (eventDate - new Date()) < (7 * 24 * 60 * 60 * 1000);
 
@@ -258,6 +270,19 @@ const VillagerUmuganda = () => {
                             </div>
                         );
                     })}
+                </div>
+
+                {/* Pagination Controls */}
+                <div className="bg-white rounded-2xl border border-gray-100 px-4">
+                    <Pagination
+                        currentPage={currentPage}
+                        totalItems={upcomingEvents.length}
+                        itemsPerPage={itemsPerPage}
+                        onPageChange={setCurrentPage}
+                        onItemsPerPageChange={setItemsPerPage}
+                        itemsPerPageOptions={[5, 10, 20]}
+                    />
+                </div>
                 </div>
             ) : (
                 <div className="bg-white rounded-3xl border-2 border-dashed border-gray-200 p-12 sm:p-20 text-center">

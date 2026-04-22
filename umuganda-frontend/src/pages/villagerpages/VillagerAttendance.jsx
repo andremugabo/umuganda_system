@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Pagination from '../../components/ui/Pagination';
 import { useSelector } from 'react-redux';
 import {
     CheckCircle,
@@ -19,6 +20,9 @@ const VillagerAttendance = () => {
     const [filteredRecords, setFilteredRecords] = useState([]);
     const [filter, setFilter] = useState('ALL'); // ALL, ATTENDED, ABSENT, EXCUSED
     const [isLoading, setIsLoading] = useState(true);
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
     const [stats, setStats] = useState({
         total: 0,
         attended: 0,
@@ -79,7 +83,14 @@ const VillagerAttendance = () => {
         } else {
             setFilteredRecords(attendanceRecords.filter(r => r.attendance === filter));
         }
+        setCurrentPage(1); // Reset to first page on filter change
     };
+
+    // Calculate pagination slice
+    const paginatedRecords = filteredRecords.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
+    );
 
     const getStatusColor = (status) => {
         switch (status) {
@@ -218,7 +229,7 @@ const VillagerAttendance = () => {
             <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
                 {filteredRecords.length > 0 ? (
                     <div className="divide-y divide-gray-50">
-                        {filteredRecords.map((record, index) => (
+                        {paginatedRecords.map((record, index) => (
                             <div
                                 key={record.id}
                                 className="p-4 sm:p-6 hover:bg-gray-50 transition-colors"
@@ -252,6 +263,19 @@ const VillagerAttendance = () => {
                         <Calendar className="w-16 h-16 mx-auto mb-4 opacity-20" />
                         <h3 className="text-lg font-bold">No records found</h3>
                         <p className="text-sm mt-2">No attendance records match your filter criteria.</p>
+                    </div>
+                )}
+
+                {/* Pagination Controls */}
+                {filteredRecords.length > 0 && (
+                    <div className="border-t border-gray-50 px-4">
+                        <Pagination
+                            currentPage={currentPage}
+                            totalItems={filteredRecords.length}
+                            itemsPerPage={itemsPerPage}
+                            onPageChange={setCurrentPage}
+                            onItemsPerPageChange={setItemsPerPage}
+                        />
                     </div>
                 )}
             </div>

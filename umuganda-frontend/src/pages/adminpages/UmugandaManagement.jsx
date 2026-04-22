@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Pagination from '../../components/ui/Pagination';
 import {
     Calendar,
     Search,
@@ -23,6 +24,10 @@ const UmugandaManagement = () => {
     const [locationMap, setLocationMap] = useState({});
     const [isLoading, setIsLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
+
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(9); // 3-col grid looks best in multiples of 3
 
     // Modal State
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -79,7 +84,14 @@ const UmugandaManagement = () => {
             locationMap[e.locationId]?.toLowerCase().includes(searchTerm.toLowerCase())
         );
         setFilteredEvents(result);
+        setCurrentPage(1);
     }, [searchTerm, events, locationMap]);
+
+    // Compute current page slice
+    const paginatedEvents = filteredEvents.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
+    );
 
     const handleSave = async (data) => {
         try {
@@ -163,7 +175,7 @@ const UmugandaManagement = () => {
 
             {/* Events List */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredEvents.map((event) => (
+                {paginatedEvents.map((event) => (
                     <div key={event.id} className="bg-white rounded-3xl border border-gray-100 shadow-sm hover:shadow-xl hover:shadow-blue-500/5 transition-all group overflow-hidden flex flex-col">
                         <div className="p-6 space-y-4 flex-1">
                             {/* Date Badge */}
@@ -230,6 +242,16 @@ const UmugandaManagement = () => {
                     </div>
                 )}
             </div>
+
+            {/* Pagination */}
+            <Pagination
+                currentPage={currentPage}
+                totalItems={filteredEvents.length}
+                itemsPerPage={itemsPerPage}
+                onPageChange={setCurrentPage}
+                onItemsPerPageChange={(val) => { setItemsPerPage(val); setCurrentPage(1); }}
+                itemsPerPageOptions={[6, 9, 18, 36]}
+            />
 
             <UmugandaModal
                 isOpen={isModalOpen}

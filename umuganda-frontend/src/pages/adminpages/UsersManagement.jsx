@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Pagination from '../../components/ui/Pagination';
 import {
     Users,
     Search,
@@ -28,6 +29,10 @@ const UsersManagement = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [roleFilter, setRoleFilter] = useState('ALL');
+
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
 
     // Modal State
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -118,7 +123,14 @@ const UsersManagement = () => {
             result = result.filter(u => u.role === roleFilter);
         }
         setFilteredUsers(result);
+        setCurrentPage(1); // Reset to page 1 on filter change
     }, [searchTerm, roleFilter, users]);
+
+    // Compute current page slice
+    const paginatedUsers = filteredUsers.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
+    );
 
     const handleDelete = async (id) => {
         if (window.confirm("Are you sure you want to delete this user?")) {
@@ -217,7 +229,7 @@ const UsersManagement = () => {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-50">
-                            {filteredUsers.map((user) => (
+                            {paginatedUsers.map((user) => (
                                 <tr key={user.id} className="hover:bg-gray-50/30 transition-colors group">
                                     <td className="px-6 py-5">
                                         <div className="flex items-center gap-3">
@@ -297,6 +309,16 @@ const UsersManagement = () => {
                             <p>No citizens found matching your criteria.</p>
                         </div>
                     )}
+                </div>
+                {/* Pagination */}
+                <div className="border-t border-gray-50 px-4">
+                    <Pagination
+                        currentPage={currentPage}
+                        totalItems={filteredUsers.length}
+                        itemsPerPage={itemsPerPage}
+                        onPageChange={setCurrentPage}
+                        onItemsPerPageChange={setItemsPerPage}
+                    />
                 </div>
             </div>
 

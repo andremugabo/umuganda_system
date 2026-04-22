@@ -171,7 +171,7 @@ public class DataSeeder {
         String defaultPassword = PasswordUtil.hashPassword("123456");
 
         // ── ADMIN ──
-        seedAdmin("muhimpundumamy@gmail.com", defaultPassword);
+        seedAdmin("mugaboandre@gmail.com", defaultPassword);
 
         // ── VILLAGE CHEFS (Local Leaders) ──
         seedUser("Jean",      "Damascene",  "jdamascene@umuganda.rw",  "0780100001", ERole.VILLAGE_CHEF,   "RW-01-01-01-01", defaultPassword);

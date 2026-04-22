@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Pagination from '../../components/ui/Pagination';
 import {
     MapPin,
     Search,
@@ -20,6 +21,10 @@ const LocationsManagement = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [typeFilter, setTypeFilter] = useState('ALL');
+
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(9);
 
     // Modal State
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -63,7 +68,14 @@ const LocationsManagement = () => {
             result = result.filter(l => l.type === typeFilter);
         }
         setFilteredLocations(result);
+        setCurrentPage(1);
     }, [searchTerm, typeFilter, locations]);
+
+    // Compute current page slice
+    const paginatedLocations = filteredLocations.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
+    );
 
     const handleNavigateDown = (location) => {
         setHistory([...history, currentParent].filter(Boolean));
@@ -188,7 +200,7 @@ const LocationsManagement = () => {
 
             {/* Grid of Locations */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredLocations.map((loc) => (
+                {paginatedLocations.map((loc) => (
                     <div key={loc.id} className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm hover:shadow-xl hover:shadow-blue-500/5 transition-all group relative overflow-hidden">
                         <div className="flex items-start justify-between mb-4">
                             <div className="w-12 h-12 rounded-2xl bg-rwanda-blue/10 flex items-center justify-center text-rwanda-blue">
@@ -243,6 +255,16 @@ const LocationsManagement = () => {
                     </div>
                 )}
             </div>
+
+            {/* Pagination */}
+            <Pagination
+                currentPage={currentPage}
+                totalItems={filteredLocations.length}
+                itemsPerPage={itemsPerPage}
+                onPageChange={setCurrentPage}
+                onItemsPerPageChange={(val) => { setItemsPerPage(val); setCurrentPage(1); }}
+                itemsPerPageOptions={[6, 9, 18, 36]}
+            />
 
             <LocationModal
                 isOpen={isModalOpen}

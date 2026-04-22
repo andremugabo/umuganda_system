@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 const api = axios.create({
-    baseURL: 'https://umuganda-backend-k32m.onrender.com/api', // Adjust if you have a proxy or different backend URL
-    // baseURL: 'http://localhost:9090/api', // Adjust if you have a proxy or different backend URL
+    baseURL: import.meta.env.VITE_API_BASE_URL || 'https://umuganda-backend-k32m.onrender.com/api',
+    // fallback to Render URL for convenience, but configurable via VITE_API_BASE_URL
     headers: {
         'Content-Type': 'application/json',
     },

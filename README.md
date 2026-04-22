@@ -82,43 +82,67 @@ The **Umuganda Management System** is a comprehensive digital platform designed 
 - PostgreSQL (if running locally without Docker)
 - Docker (optional, for containerized run)
 
-### Running with Docker Compose
+### Deployment with Docker Compose
 
-For the easiest setup, you can run the entire Umuganda System (Backend, Frontend, and Database) using Docker Compose:
+The Umuganda Management System is fully containerized. For the easiest setup, you can launch the entire ecosystem (Nginx Frontend, Spring Boot Backend, and PostgreSQL Database) with a single command:
 
 ```bash
 docker-compose up --build
 ```
 
-- **Frontend**: http://localhost:5173
-- **Backend API**: http://localhost:9090
-- **Database**: Port 5433 (on host)
+#### Services & Routing
+- **Frontend (Web UI)**: [http://localhost:5173](http://localhost:5173)
+- **Backend (API)**: [http://localhost:9090](http://localhost:9090)
+- **Interactive API Docs (Swagger)**: [http://localhost:9090/swagger-ui/index.html](http://localhost:9090/swagger-ui/index.html)
+- **PostgreSQL Database**: Port `5433` (on host machine for inspection)
 
-### Running Locally
+#### Environment Variables
+The system uses environment variables for flexible configuration. You can customize these in the `docker-compose.yml` or by creating a `.env` file:
 
-**Backend:**
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `DB_HOST` | Database service name or host | `db` |
+| `DB_PORT` | Port of the database | `5432` |
+| `DB_NAME` | Name of the database | `umuganda_db` |
+| `DB_USERNAME` | Database username | `postgres` |
+| `DB_PASSWORD` | Database password | `123` |
+| `VITE_API_BASE_URL` | Frontend API endpoint | `https://umuganda-backend-k32m.onrender.com/api` |
+
+---
+
+## Technical Architecture
+
+This project follows a **Modular Monolith** architecture with a strong emphasis on the **Controller-Service-Repository** pattern.
+
+### Backend Strategy
+- **Audit Tracking**: Automatic tracking of record creation and modification.
+- **DTO Layer**: Strict separation between internal models and external API responses.
+- **Global Exception Handling**: Centralized management of application errors.
+
+### Frontend Strategy
+- **Atomic State**: Managed via Redux Toolkit slices.
+- **Component Reusability**: Modular UI components (Modals, Inputs, Cards) for consistent design.
+- **Form Validation**: Type-safe validation using Zod and React Hook Form.
+
+---
+
+## Running Locally (Development Mode)
+
+If you prefer to run the components individually for development:
+
+**1. Backend (Spring Boot)**
 ```bash
 cd umuganda
 ./mvnw spring-boot:run
 ```
-*API will be available at `http://localhost:9090`*
 
-**Frontend:**
+**2. Frontend (React/Vite)**
 ```bash
 cd umuganda-frontend
 npm install
 npm run dev
 ```
-*UI will be available at `http://localhost:5173`*
-
-### API Documentation
-Once the backend is running, you can explore the interactive API documentation at:
-- [Swagger UI (Local)](http://localhost:9090/swagger-ui/index.html)
-- [Production API Reference](https://umuganda-backend-k32m.onrender.com/swagger-ui/index.html)
 
 ---
-
-## Contribution & Design
-This project follows a **Modular Monolith** architecture with a strong emphasis on the **Controller-Service-Repository** pattern, ensuring high maintainability and scalability.
 
 Built with passion for community progress.

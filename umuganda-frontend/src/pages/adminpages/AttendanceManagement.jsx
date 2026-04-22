@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import Pagination from '../../components/ui/Pagination';
+
 import {
     CheckSquare,
     Search,
@@ -22,8 +24,10 @@ import { exportToCSV } from '../../utils/exportUtils';
 
 
 const AttendanceManagement = () => {
+    const { user: currentUser } = useSelector((state) => state.auth);
     const [events, setEvents] = useState([]);
     const [selectedEvent, setSelectedEvent] = useState(null);
+
     const [attendanceRecords, setAttendanceRecords] = useState([]);
     const [users, setUsers] = useState({});
     const [locationMap, setLocationMap] = useState({});
@@ -74,13 +78,18 @@ const AttendanceManagement = () => {
     const fetchInitialData = async () => {
         try {
             setIsLoading(true);
-            const [eventData, userData, locationData] = await Promise.all([
-                umugandaService.getAllEvents(),
-                userService.getAllUsers(),
-                locationService.getAllLocations()
-            ]);
+            let eventData = await umugandaService.getAllEvents();
+            let userData = await userService.getAllUsers();
+            const locationData = await locationService.getAllLocations();
+
+            // Role-based filtering: Leaders only see their village events and people
+            if (currentUser?.role !== 'ADMIN') {
+                eventData = eventData.filter(e => e.locationId === currentUser.locationId);
+                userData = userData.filter(u => u.locationId === currentUser.locationId);
+            }
 
             setEvents(eventData);
+
 
             // Build user lookup
             const userMap = {};
@@ -102,11 +111,13 @@ const AttendanceManagement = () => {
             });
             setLocationMap(map);
         } catch (error) {
+            console.error("[AttendanceManagement] Fetch Error:", error);
             toast.error("Failed to load data");
         } finally {
             setIsLoading(false);
         }
     };
+
 
     const fetchAttendanceForEvent = async (eventId) => {
         try {
@@ -194,6 +205,31 @@ const AttendanceManagement = () => {
             </div>
         );
     }
+
+    // Role-based data availability check
+    const isLocalLeader = currentUser?.role === 'VILLAGE_CHEF' || currentUser?.role === 'VILLAGE_SOCIAL';
+    const hasNoLocation = isLocalLeader && !currentUser?.locationId;
+
+    if (hasNoLocation) {
+        return (
+            <div className="bg-amber-50 border-2 border-amber-200 p-10 rounded-3xl text-center space-y-4 animate-in zoom-in duration-300">
+                <div className="w-16 h-16 bg-amber-100 rounded-2xl flex items-center justify-center mx-auto text-amber-600">
+                    <MapPin className="w-8 h-8" />
+                </div>
+                <h2 className="text-2xl font-bold text-amber-900">No Village Assigned</h2>
+                <p className="text-amber-700 max-w-md mx-auto">
+                    Your profile is not yet linked to a specific village. Attendance management requires a village scope. 
+                    Please contact a **System Administrator** to assign your location.
+                </p>
+                <div className="pt-4">
+                    <button onClick={() => window.location.reload()} className="px-6 py-2 bg-amber-600 text-white rounded-xl hover:bg-amber-700 transition-all font-bold">
+                        Refresh Profile
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
 
     return (
         <div className="space-y-6 animate-in fade-in duration-500">

@@ -1,13 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import {
+
     Users,
     MapPin,
     Calendar,
     Plus,
     MoreHorizontal,
     ArrowUpRight,
-    TrendingUp
+    TrendingUp,
+    PieChart as PieIcon,
+    LineChart as LineIcon,
 } from 'lucide-react';
+import {
+    ResponsiveContainer,
+    AreaChart,
+    Area,
+    XAxis,
+    YAxis,
+    CartesianGrid,
+    Tooltip,
+    PieChart,
+    Pie,
+    Cell,
+    BarChart,
+    Bar,
+    Legend
+} from 'recharts';
 import dashboardService from '../../services/dashboardService';
 import { toast } from 'react-toastify';
 
@@ -17,7 +35,9 @@ const AdminDashboard = () => {
         totalLocations: 0,
         totalEvents: 0,
         recentUsers: [],
-        upcomingEvents: []
+        upcomingEvents: [],
+        allUsers: [],
+        allEvents: []
     });
     const [isLoading, setIsLoading] = useState(true);
 
@@ -36,7 +56,50 @@ const AdminDashboard = () => {
         fetchStats();
     }, []);
 
+    // Process data for charts
+    const getRoleDistribution = () => {
+        const counts = {};
+        stats.allUsers.forEach(u => {
+            counts[u.role] = (counts[u.role] || 0) + 1;
+        });
+        return Object.keys(counts).map(role => ({
+            name: role.replace('_', ' '),
+            value: counts[role]
+        }));
+    };
+
+    const getRegistrationTrend = () => {
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        const currentMonth = new Date().getMonth();
+        
+        // Initialize last 6 months
+        const trendData = [];
+        for (let i = 5; i >= 0; i--) {
+            const m = (currentMonth - i + 12) % 12;
+            trendData.push({ name: months[m], count: 0 });
+        }
+
+        stats.allUsers.forEach(u => {
+            if (u.createdAt) {
+                const date = new Date(u.createdAt);
+                const monthName = months[date.getMonth()];
+                const dataPoint = trendData.find(d => d.name === monthName);
+                if (dataPoint) dataPoint.count++;
+            }
+        });
+
+        // If no data yet, provide some baseline for visualization if it's a new system
+        if (stats.allUsers.length > 0 && trendData.every(d => d.count === 0)) {
+            trendData[5].count = stats.allUsers.length;
+        }
+
+        return trendData;
+    };
+
+    const COLORS = ['#00A3E0', '#007A33', '#FAD201', '#EF3340', '#722F37'];
+
     const statCards = [
+
         { label: 'Total Citizens', value: stats.totalUsers, icon: Users, color: 'text-rwanda-blue', bg: 'bg-rwanda-blue/10', trend: '+12%' },
         { label: 'Registered Locations', value: stats.totalLocations, icon: MapPin, color: 'text-rwanda-green', bg: 'bg-rwanda-green/10', trend: '+3%' },
         { label: 'Umuganda Planned', value: stats.totalEvents, icon: Calendar, color: 'text-rwanda-yellow', bg: 'bg-rwanda-yellow/10', trend: '+5%' },
@@ -88,6 +151,95 @@ const AdminDashboard = () => {
                     );
                 })}
             </div>
+
+            {/* Charts Section */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {/* Registration Trend */}
+                <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
+                    <div className="flex items-center justify-between mb-8">
+                        <div>
+                            <h3 className="text-lg font-bold text-gray-900">Registration Trend</h3>
+                            <p className="text-sm text-gray-500">Citizen enrollment over the last 6 months</p>
+                        </div>
+                        <div className="p-2 bg-blue-50 rounded-xl">
+                            <LineIcon className="w-5 h-5 text-rwanda-blue" />
+                        </div>
+                    </div>
+                    <div className="h-[300px] w-full">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <AreaChart data={getRegistrationTrend()}>
+                                <defs>
+                                    <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="5%" stopColor="#00A3E0" stopOpacity={0.1} />
+                                        <stop offset="95%" stopColor="#00A3E0" stopOpacity={0} />
+                                    </linearGradient>
+                                </defs>
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F1F5F9" />
+                                <XAxis 
+                                    dataKey="name" 
+                                    axisLine={false} 
+                                    tickLine={false} 
+                                    tick={{fill: '#94A3B8', fontSize: 12}}
+                                    dy={10}
+                                />
+                                <YAxis 
+                                    axisLine={false} 
+                                    tickLine={false} 
+                                    tick={{fill: '#94A3B8', fontSize: 12}}
+                                />
+                                <Tooltip 
+                                    contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
+                                />
+                                <Area 
+                                    type="monotone" 
+                                    dataKey="count" 
+                                    stroke="#00A3E0" 
+                                    strokeWidth={3}
+                                    fillOpacity={1} 
+                                    fill="url(#colorCount)" 
+                                />
+                            </AreaChart>
+                        </ResponsiveContainer>
+                    </div>
+                </div>
+
+                {/* Role Distribution */}
+                <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
+                    <div className="flex items-center justify-between mb-8">
+                        <div>
+                            <h3 className="text-lg font-bold text-gray-900">User Roles</h3>
+                            <p className="text-sm text-gray-500">Breakdown of system users by role</p>
+                        </div>
+                        <div className="p-2 bg-green-50 rounded-xl">
+                            <PieIcon className="w-5 h-5 text-rwanda-green" />
+                        </div>
+                    </div>
+                    <div className="h-[300px] w-full flex items-center justify-center">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <PieChart>
+                                <Pie
+                                    data={getRoleDistribution()}
+                                    cx="50%"
+                                    cy="50%"
+                                    innerRadius={60}
+                                    outerRadius={100}
+                                    paddingAngle={8}
+                                    dataKey="value"
+                                >
+                                    {getRoleDistribution().map((entry, index) => (
+                                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                    ))}
+                                </Pie>
+                                <Tooltip 
+                                    contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
+                                />
+                                <Legend verticalAlign="bottom" height={36}/>
+                            </PieChart>
+                        </ResponsiveContainer>
+                    </div>
+                </div>
+            </div>
+
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Recent Users Table */}

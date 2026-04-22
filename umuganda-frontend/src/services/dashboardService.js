@@ -14,8 +14,11 @@ const dashboardService = {
             totalLocations: locations.data.length,
             totalEvents: events.data.length,
             recentUsers: users.data.slice(0, 5),
-            upcomingEvents: events.data.slice(0, 5)
+            upcomingEvents: events.data.slice(0, 5),
+            allUsers: users.data,
+            allEvents: events.data
         };
+
     },
 
     // Villager Stats

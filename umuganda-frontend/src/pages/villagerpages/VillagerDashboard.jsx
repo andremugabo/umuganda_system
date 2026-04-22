@@ -12,13 +12,26 @@ import {
     UserX,
     TrendingUp,
     Loader2,
-    CalendarDays
+    CalendarDays,
+    Target
 } from 'lucide-react';
+import {
+    ResponsiveContainer,
+    AreaChart,
+    Area,
+    XAxis,
+    YAxis,
+    CartesianGrid,
+    Tooltip,
+    RadialBarChart,
+    RadialBar,
+} from 'recharts';
 import umugandaService from '../../services/umugandaService';
 import attendanceService from '../../services/attendanceService';
 import notificationService from '../../services/notificationService';
 import locationService from '../../services/locationService';
 import { toast } from 'react-toastify';
+
 
 const VillagerDashboard = () => {
     const { user } = useSelector((state) => state.auth);
@@ -33,7 +46,9 @@ const VillagerDashboard = () => {
         attendanceRate: 0,
         upcomingCount: 0
     });
+    const [attendanceHistory, setAttendanceHistory] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+
 
     useEffect(() => {
         if (user?.id && user?.locationId) {
@@ -96,6 +111,27 @@ const VillagerDashboard = () => {
                 attendanceRate,
                 upcomingCount: upcoming.length
             });
+
+            // Process attendance trend (last 6 months)
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const currentMonth = new Date().getMonth();
+            const trend = [];
+            for (let i = 5; i >= 0; i--) {
+                const m = (currentMonth - i + 12) % 12;
+                trend.push({ name: months[m], attended: 0, total: 0 });
+            }
+
+            attendanceData.forEach(a => {
+                const date = a.createdAt ? new Date(a.createdAt) : new Date(); // Fallback to now if missing
+                const monthName = months[date.getMonth()];
+                const point = trend.find(p => p.name === monthName);
+                if (point) {
+                    point.total++;
+                    if (a.attendance === 'ATTENDED') point.attended++;
+                }
+            });
+            setAttendanceHistory(trend);
+
 
         } catch (error) {
             toast.error('Failed to load dashboard data');
@@ -270,28 +306,90 @@ const VillagerDashboard = () => {
                 <div className="space-y-6">
                     <h2 className="text-xl font-bold text-gray-800">Quick Actions</h2>
 
-                    {/* Statistics Card */}
-                    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-                        <div className="flex items-center gap-3 mb-4">
-                            <div className="w-10 h-10 rounded-xl bg-green-100 flex items-center justify-center text-green-600">
-                                <TrendingUp className="w-6 h-6" />
+                    {/* Attendance Analysis */}
+                    <div className="bg-white rounded-3xl border border-gray-100 shadow-xl shadow-gray-200/50 overflow-hidden">
+                        <div className="bg-gradient-to-r from-rwanda-blue to-blue-600 p-6 text-white">
+                            <div className="flex items-center justify-between mb-4">
+                                <h3 className="font-bold">Attendance Analytics</h3>
+                                <div className="p-2 bg-white/20 rounded-xl backdrop-blur-md">
+                                    <Target className="w-5 h-5" />
+                                </div>
                             </div>
-                            <div>
-                                <p className="text-xs text-gray-400 font-bold uppercase">Your Progress</p>
-                                <p className="text-sm font-bold text-gray-800">Keep it up!</p>
+                            <div className="h-40 flex items-center justify-center relative">
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <RadialBarChart 
+                                        cx="50%" 
+                                        cy="50%" 
+                                        innerRadius="60%" 
+                                        outerRadius="100%" 
+                                        barSize={10} 
+                                        data={[{ name: 'Rate', value: stats.attendanceRate, fill: '#FFFFFF' }]}
+                                        startAngle={180}
+                                        endAngle={0}
+                                    >
+                                        <RadialBar
+                                            minAngle={15}
+                                            background={{ fill: 'rgba(255,255,255,0.1)' }}
+                                            clockWise
+                                            dataKey="value"
+                                            cornerRadius={5}
+                                        />
+                                    </RadialBarChart>
+                                </ResponsiveContainer>
+                                <div className="absolute inset-x-0 bottom-8 flex flex-col items-center">
+                                    <span className="text-3xl font-black">{stats.attendanceRate}%</span>
+                                    <span className="text-[10px] font-bold uppercase tracking-widest opacity-70">Goal Reached</span>
+                                </div>
                             </div>
                         </div>
-                        <div className="space-y-3">
-                            <div className="bg-gray-50 rounded-xl p-4 border border-gray-100">
-                                <p className="text-xs text-gray-500 font-medium">Total Events</p>
-                                <p className="text-2xl font-bold text-gray-900 mt-1">{stats.totalEvents}</p>
+                        <div className="p-6 space-y-4">
+                            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-2xl border border-gray-100">
+                                <div>
+                                    <p className="text-xs text-gray-400 font-bold uppercase">Total Events</p>
+                                    <p className="text-xl font-black text-gray-800">{stats.totalEvents}</p>
+                                </div>
+                                <div className="h-10 w-1 bg-gray-200 rounded-full" />
+                                <div className="text-right">
+                                    <p className="text-xs text-gray-400 font-bold uppercase">Participated</p>
+                                    <p className="text-xl font-black text-rwanda-blue">{stats.attendedCount}</p>
+                                </div>
                             </div>
-                            <div className="bg-gray-50 rounded-xl p-4 border border-gray-100">
-                                <p className="text-xs text-gray-500 font-medium">Events Attended</p>
-                                <p className="text-2xl font-bold text-green-600 mt-1">{stats.attendedCount}</p>
+
+                            <div className="h-48 w-full pt-4">
+                                <p className="text-xs font-bold text-gray-400 uppercase mb-4 tracking-tighter">Participation Trend</p>
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <AreaChart data={attendanceHistory}>
+                                        <defs>
+                                            <linearGradient id="colorAttended" x1="0" y1="0" x2="0" y2="1">
+                                                <stop offset="5%" stopColor="#00A3E0" stopOpacity={0.3} />
+                                                <stop offset="95%" stopColor="#00A3E0" stopOpacity={0} />
+                                            </linearGradient>
+                                        </defs>
+                                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F1F5F9" />
+                                        <XAxis 
+                                            dataKey="name" 
+                                            axisLine={false} 
+                                            tickLine={false} 
+                                            tick={{fill: '#94A3B8', fontSize: 10}}
+                                        />
+                                        <Tooltip 
+                                            contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                                            itemStyle={{ fontSize: '10px', fontWeight: 'bold' }}
+                                        />
+                                        <Area 
+                                            type="monotone" 
+                                            dataKey="attended" 
+                                            stroke="#00A3E0" 
+                                            strokeWidth={2}
+                                            fillOpacity={1} 
+                                            fill="url(#colorAttended)" 
+                                        />
+                                    </AreaChart>
+                                </ResponsiveContainer>
                             </div>
                         </div>
                     </div>
+
 
                     {/* Notifications Card */}
                     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">

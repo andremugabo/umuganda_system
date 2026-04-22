@@ -42,7 +42,15 @@ public class UsersServiceImpl implements UsersService {
         if (user.getLocation() != null) {
             dto.setLocationId(user.getLocation().getId());
         }
+
+        // Map Audit Fields
+        dto.setCreatedAt(user.getCreatedAt());
+        dto.setUpdatedAt(user.getUpdatedAt());
+        dto.setCreatedBy(user.getCreatedBy());
+        dto.setUpdatedBy(user.getUpdatedBy());
+
         return dto;
+
     }
 
     private Users mapToEntity(UserRegistrationDto dto) {

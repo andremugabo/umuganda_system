@@ -21,4 +21,11 @@ public class UsersDto {
     private String phone;
     private ERole role;
     private UUID locationId;
+
+    // Audit fields for Accountability
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+    private String createdBy;
+    private String updatedBy;
 }
+

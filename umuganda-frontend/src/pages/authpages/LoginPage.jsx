@@ -39,10 +39,15 @@ const LoginPage = () => {
         navigate('/admin/dashboard');
       } else if (user?.role === 'VILLAGER') {
         navigate('/villager/dashboard');
+      } else if (user?.role === 'VILLAGE_CHEF') {
+        navigate('/chef/dashboard');
+      } else if (user?.role === 'VILLAGE_SOCIAL') {
+        navigate('/social/dashboard');
       } else {
-        navigate('/'); // Fallback
+        navigate('/notifications'); // Generic dashboard/notifications fallback
       }
     }
+
 
     dispatch(reset());
   }, [user, isError, isSuccess, message, navigate, dispatch]);

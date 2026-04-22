@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import Pagination from '../../components/ui/Pagination';
+
 import {
     Calendar,
     Search,
@@ -22,8 +24,10 @@ import { exportToCSV } from '../../utils/exportUtils';
 
 
 const UmugandaManagement = () => {
+    const { user: currentUser } = useSelector((state) => state.auth);
     const [events, setEvents] = useState([]);
     const [filteredEvents, setFilteredEvents] = useState([]);
+
     const [locationMap, setLocationMap] = useState({});
     const [isLoading, setIsLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
@@ -64,13 +68,17 @@ const UmugandaManagement = () => {
     const fetchInitialData = async () => {
         try {
             setIsLoading(true);
-            const [eventData, locationData] = await Promise.all([
-                umugandaService.getAllEvents(),
-                locationService.getAllLocations()
-            ]);
+            let eventData = await umugandaService.getAllEvents();
+            const locationData = await locationService.getAllLocations();
+
+            // Role-based filtering: Local Leaders (Chef/Social) only see their village
+            if (currentUser?.role !== 'ADMIN') {
+                eventData = eventData.filter(e => e.locationId === currentUser.locationId);
+            }
 
             setEvents(eventData);
             setFilteredEvents(eventData);
+
 
             // Build location lookup (Full path)
             const lookup = {};
@@ -95,8 +103,15 @@ const UmugandaManagement = () => {
 
     const fetchEvents = async () => {
         try {
-            const data = await umugandaService.getAllEvents();
+            let data = await umugandaService.getAllEvents();
+
+            // Re-apply role-based filtering
+            if (currentUser?.role !== 'ADMIN') {
+                data = data.filter(e => e.locationId === currentUser.locationId);
+            }
+
             setEvents(data);
+
         } catch (error) {
             toast.error("Failed to refresh events");
         }
@@ -162,6 +177,32 @@ const UmugandaManagement = () => {
             </div>
         );
     }
+
+    // Role-based data availability check
+    const isLocalLeader = currentUser?.role === 'VILLAGE_CHEF' || currentUser?.role === 'VILLAGE_SOCIAL';
+    const hasNoLocation = isLocalLeader && !currentUser?.locationId;
+
+    if (hasNoLocation) {
+        return (
+            <div className="bg-amber-50 border-2 border-amber-200 p-10 rounded-3xl text-center space-y-4 animate-in zoom-in duration-300">
+                <div className="w-16 h-16 bg-amber-100 rounded-2xl flex items-center justify-center mx-auto text-amber-600">
+                    <MapPin className="w-8 h-8" />
+                </div>
+                <h2 className="text-2xl font-bold text-amber-900">Village Scope Required</h2>
+                <p className="text-amber-700 max-w-md mx-auto font-medium">
+                    You are authorized to manage Umuganda events, but your profile has no village assigned. 
+                    Please contact an **Administrator** to link your account to a village.
+                </p>
+                <div className="pt-4">
+                    <button onClick={() => window.location.reload()} className="px-6 py-2 bg-amber-600 text-white rounded-xl hover:bg-amber-700 transition-all font-bold">
+                        Check Profile Again
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
+
 
     return (
         <div className="space-y-6 animate-in fade-in duration-500">

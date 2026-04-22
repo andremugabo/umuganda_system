@@ -31,6 +31,11 @@ import attendanceService from '../../services/attendanceService';
 import notificationService from '../../services/notificationService';
 import locationService from '../../services/locationService';
 import { toast } from 'react-toastify';
+import Skeleton, { CardSkeleton, ChartSkeleton } from '../../components/ui/Skeleton';
+import { generatePDFReport } from '../../utils/pdfExportUtils';
+import { FileText } from 'lucide-react';
+
+
 
 
 const VillagerDashboard = () => {
@@ -175,11 +180,36 @@ const VillagerDashboard = () => {
         }
     };
 
+    const handleExportPDF = () => {
+        const columns = ['Date', 'Event', 'Location', 'Status'];
+        const data = recentAttendance.map(a => [
+            new Date(a.date).toLocaleDateString(),
+            a.eventTitle,
+            locationMap[a.locationId]?.name || 'Unknown',
+            a.status
+        ]);
+        generatePDFReport(data, `${user?.firstName}'s Participation Summary`, columns, 'my_activity_report.pdf');
+    };
+
     if (isLoading) {
         return (
-            <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
-                <Loader2 className="w-12 h-12 text-rwanda-blue animate-spin" />
-                <p className="text-gray-500 font-medium">Loading your dashboard...</p>
+            <div className="space-y-8 animate-in fade-in duration-500">
+                {/* Banner Skeleton */}
+                <Skeleton className="h-64 rounded-3xl w-full" />
+                
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div className="lg:col-span-2 space-y-6">
+                        <Skeleton className="h-8 w-64" />
+                        <CardSkeleton />
+                        <CardSkeleton />
+                        <CardSkeleton />
+                    </div>
+                    <div className="space-y-6">
+                        <Skeleton className="h-8 w-48" />
+                        <ChartSkeleton />
+                        <CardSkeleton />
+                    </div>
+                </div>
             </div>
         );
     }
@@ -193,6 +223,16 @@ const VillagerDashboard = () => {
                     <p className="text-blue-100 mt-2 text-lg max-w-xl opacity-90">
                         Welcome to your Umuganda portal. Stay updated with your community activities and track your participation.
                     </p>
+                    <div className="mt-8 flex flex-wrap gap-4">
+                        <button 
+                            onClick={handleExportPDF}
+                            className="flex items-center justify-center gap-2 bg-white text-rwanda-blue px-6 py-3 rounded-2xl hover:bg-blue-50 transition-all shadow-lg font-bold active:scale-95"
+                        >
+                            <FileText className="w-5 h-5" />
+                            Download My Summary
+                        </button>
+                    </div>
+
                     <div className="mt-8 flex flex-wrap gap-4">
                         <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20">
                             <p className="text-xs text-blue-200 font-medium uppercase tracking-wider">Attendance Rate</p>

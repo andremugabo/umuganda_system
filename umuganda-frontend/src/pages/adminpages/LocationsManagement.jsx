@@ -9,11 +9,14 @@ import {
     ChevronRight,
     Layers,
     Loader2,
-    ArrowLeft
+    ArrowLeft,
+    Download
 } from 'lucide-react';
 import locationService from '../../services/locationService';
 import { toast } from 'react-toastify';
 import LocationModal from '../../components/ui/LocationModal';
+import { exportToCSV } from '../../utils/exportUtils';
+
 
 const LocationsManagement = () => {
     const [locations, setLocations] = useState([]);
@@ -196,7 +199,15 @@ const LocationsManagement = () => {
                         <option value="SECTOR">Sectors</option>
                     </select>
                 )}
+                <button
+                    onClick={() => exportToCSV(filteredLocations, `locations_report_${currentParent?.name || 'national'}`)}
+                    className="flex items-center justify-center gap-2 px-4 py-2 bg-white border-2 border-gray-100 rounded-xl text-gray-600 font-bold text-sm hover:border-rwanda-blue hover:text-rwanda-blue transition-all"
+                >
+                    <Download className="w-4 h-4" />
+                    Export CSV
+                </button>
             </div>
+
 
             {/* Grid of Locations */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

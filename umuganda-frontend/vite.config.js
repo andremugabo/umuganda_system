@@ -5,11 +5,8 @@ import { VitePWA } from 'vite-plugin-pwa'
 
 // https://vite.dev/config/
 export default defineConfig({
-  esbuild: {
-    jsxInject: `import React from 'react'`
-  },
   plugins: [
-    react(),
+    react({ jsxRuntime: 'classic' }),
     tailwindcss(),
     VitePWA({
       registerType: 'autoUpdate',

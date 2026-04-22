@@ -1,0 +1,7 @@
+@import "tailwindcss";
+
+@theme {
+    --color-rwanda-blue: #00A1DE;
+    --color-rwanda-yellow: #FAD201;
+    --color-rwanda-green: #20603D;
+}

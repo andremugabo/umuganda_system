@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.git/
+.gitignore
+.vscode/
+.idea/
+Dockerfile
+.dockerignore
+package-lock.json
+README.md
+eslint.config.js
+vite.config.js

@@ -1,0 +1,29 @@
+
+> umuganda-frontend@0.0.0 build
+> vite build
+
+vite v7.3.0 building client environment for production...
+transforming...
+✓ 1801 modules transformed.
+✗ Build failed in 2.00s
+error during build:
+src/App.jsx (14:7): "default" is not exported by "src/pages/villagerpages/VillagerDashboard.jsx", imported by "src/App.jsx".
+file: /Users/ntgr/Desktop/This.Mac/MYPROJECT/HUSNA/UmugandaSyst/umuganda-frontend/src/App.jsx:14:7
+
+12: import ResetPasswordPage from './pages/authpages/ResetPasswordPage';
+13: 
+14: import VillagerDashboard from './pages/villagerpages/VillagerDashboard';
+           ^
+15: import AdminDashboard from './pages/adminpages/AdminDashboard';
+16: // import Index from './pages/index'; // Assuming you might have a landing page
+
+    at getRollupError (file:///Users/ntgr/Desktop/This.Mac/MYPROJECT/HUSNA/UmugandaSyst/umuganda-frontend/node_modules/rollup/dist/es/shared/parseAst.js:401:41)
+    at error (file:///Users/ntgr/Desktop/This.Mac/MYPROJECT/HUSNA/UmugandaSyst/umuganda-frontend/node_modules/rollup/dist/es/shared/parseAst.js:397:42)
+    at Module.error (file:///Users/ntgr/Desktop/This.Mac/MYPROJECT/HUSNA/UmugandaSyst/umuganda-frontend/node_modules/rollup/dist/es/shared/node-entry.js:17022:16)
+    at Module.traceVariable (file:///Users/ntgr/Desktop/This.Mac/MYPROJECT/HUSNA/UmugandaSyst/umuganda-frontend/node_modules/rollup/dist/es/shared/node-entry.js:17478:29)
+    at ModuleScope.findVariable (file:///Users/ntgr/Desktop/This.Mac/MYPROJECT/HUSNA/UmugandaSyst/umuganda-frontend/node_modules/rollup/dist/es/shared/node-entry.js:15141:39)
+    at FunctionScope.findVariable (file:///Users/ntgr/Desktop/This.Mac/MYPROJECT/HUSNA/UmugandaSyst/umuganda-frontend/node_modules/rollup/dist/es/shared/node-entry.js:5688:38)
+    at FunctionBodyScope.findVariable (file:///Users/ntgr/Desktop/This.Mac/MYPROJECT/HUSNA/UmugandaSyst/umuganda-frontend/node_modules/rollup/dist/es/shared/node-entry.js:5688:38)
+    at Identifier.bind (file:///Users/ntgr/Desktop/This.Mac/MYPROJECT/HUSNA/UmugandaSyst/umuganda-frontend/node_modules/rollup/dist/es/shared/node-entry.js:5462:40)
+    at CallExpression.bind (file:///Users/ntgr/Desktop/This.Mac/MYPROJECT/HUSNA/UmugandaSyst/umuganda-frontend/node_modules/rollup/dist/es/shared/node-entry.js:2825:28)
+    at CallExpression.bind (file:///Users/ntgr/Desktop/This.Mac/MYPROJECT/HUSNA/UmugandaSyst/umuganda-frontend/node_modules/rollup/dist/es/shared/node-entry.js:12172:15)

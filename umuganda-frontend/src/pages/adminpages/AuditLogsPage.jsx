@@ -37,41 +37,8 @@ const AuditLogsPage = () => {
     const fetchAuditLogs = async () => {
         try {
             setIsLoading(true);
-            // In a real system, we might have a dedicated /audit endpoint
-            // For now, we are leveraging the audit fields in Users returned by getAllUsers
-            const users = await userService.getAllUsers();
-            
-            // Transform user data into log entries for demonstration
-            const logEntries = users.flatMap(user => {
-                const entries = [];
-                if (user.createdAt) {
-                    entries.push({
-                        id: `${user.id}-created`,
-                        entityId: user.id,
-                        entityType: 'USER',
-                        action: 'CREATE',
-                        user: user.createdBy || 'SYSTEM',
-                        timestamp: user.createdAt,
-                        details: `Created user ${user.firstName} ${user.lastName} (${user.role})`,
-                        ip: '192.168.1.1'
-                    });
-                }
-                if (user.updatedAt && user.updatedAt !== user.createdAt) {
-                    entries.push({
-                        id: `${user.id}-updated`,
-                        entityId: user.id,
-                        entityType: 'USER',
-                        action: 'UPDATE',
-                        user: user.updatedBy || 'ADMIN',
-                        timestamp: user.updatedAt,
-                        details: `Modified profile for ${user.firstName}`,
-                        ip: '192.168.1.45'
-                    });
-                }
-                return entries;
-            }).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-
-            setLogs(logEntries);
+            const data = await userService.getAuditLogs();
+            setLogs(data);
         } catch (error) {
             toast.error("Failed to load audit logs");
         } finally {
@@ -84,7 +51,7 @@ const AuditLogsPage = () => {
         return logs.filter(log => {
             const matchesFilter = filter === 'ALL' || log.action === filter;
             const matchesSearch = 
-                log.user.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                log.performedBy.toLowerCase().includes(searchQuery.toLowerCase()) || 
                 log.details.toLowerCase().includes(searchQuery.toLowerCase());
             return matchesFilter && matchesSearch;
         });
@@ -196,7 +163,7 @@ const AuditLogsPage = () => {
                                                 <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-rwanda-blue border border-blue-100">
                                                     <User className="w-4 h-4" />
                                                 </div>
-                                                <span className="text-sm font-bold text-gray-800">{log.user}</span>
+                                                <span className="text-sm font-bold text-gray-800">{log.performedBy}</span>
                                             </div>
                                         </td>
                                         <td className="px-8 py-5">
@@ -206,12 +173,14 @@ const AuditLogsPage = () => {
                                         </td>
                                         <td className="px-8 py-5">
                                             <p className="text-sm font-medium text-gray-700">{log.details}</p>
-                                            <p className="text-[10px] text-gray-400 font-bold uppercase mt-1">{log.entityType} ID: {log.entityId.substring(0,8)}</p>
+                                            {log.entityId && log.entityId !== "N/A" && (
+                                              <p className="text-[10px] text-gray-400 font-bold uppercase mt-1">{log.entityName} ID: {log.entityId.substring(0,8)}</p>
+                                            )}
                                         </td>
                                         <td className="px-8 py-5">
                                             <div className="flex items-center gap-2 text-gray-400 text-xs font-mono">
                                                 <Monitor className="w-3 h-3" />
-                                                {log.ip}
+                                                {log.ipAddress}
                                             </div>
                                         </td>
                                         <td className="px-8 py-5 text-right">

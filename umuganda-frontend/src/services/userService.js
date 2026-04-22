@@ -23,6 +23,11 @@ const userService = {
 
     deleteUser: async (id) => {
         await api.delete(`/users/${id}`);
+    },
+
+    getAuditLogs: async () => {
+        const response = await api.get('/audit-logs');
+        return response.data;
     }
 };
 

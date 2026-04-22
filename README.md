@@ -1,6 +1,6 @@
 # Umuganda Management System
 
-[![Project Logo](./Images/logo.png)](./Images/logo.png)
+[![Project Logo](Images/logo.png)](Images/logo.png)
 
 ### *Twese Hamwe, Buri Kigero — Empowering Communities through Digital Coordination*
 

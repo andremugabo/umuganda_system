@@ -8,31 +8,31 @@ The **Umuganda Management System** is a comprehensive digital platform designed 
 
 ---
 
-## 🚀 Key Features
+## Key Features
 
-### 🔐 Modern Authentication & Security
+### Modern Authentication & Security
 - **Role-Based Access Control (RBAC)**: Personalized dashboards for Administrators, Local Leaders, and Villagers.
 - **Secure Auth**: UUID-based session management and encrypted password storage.
 
-### 📅 Event Lifecycle Management
+### Event Lifecycle Management
 - **Smart Scheduling**: Effortlessly plan and publish Umuganda activities across different locations.
 - **Progress Tracking**: Monitor the status of community projects from initiation to completion.
 
-### 📍 Intelligent Location Mapping
+### Intelligent Location Mapping
 - **Hierarchical Organization**: Management of activities based on administrative levels (Districts, Sectors, Cells, Villages).
 - **Localized Assignments**: Assigning specific tasks and leaders to respective geographical areas.
 
-### 📝 Digital Attendance
+### Digital Attendance
 - **Real-time Record-keeping**: Automated attendance tracking to ensure transparency and accountability.
 - **Historical Data**: Easily accessible participation records for administrative reporting.
 
-### 🔔 Integrated Notification System
+### Integrated Notification System
 - **Citizen Engagement**: Automated email and internal system notifications for upcoming events and announcements.
 - **Leader Alerts**: Real-time updates for administrative actions and task assignments.
 
 ---
 
-## 🛠 Technology Stack
+## Technology Stack
 
 ### **Backend**
 - **Framework**: Spring Boot 3.x
@@ -56,7 +56,7 @@ The **Umuganda Management System** is a comprehensive digital platform designed 
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```text
 .
@@ -74,7 +74,7 @@ The **Umuganda Management System** is a comprehensive digital platform designed 
 
 ---
 
-## 🚦 Getting Started
+## Getting Started
 
 ### Prerequisites
 - JDK 17 or higher
@@ -106,7 +106,7 @@ Once the backend is running, you can explore the interactive API documentation a
 
 ---
 
-## 👨‍💻 Contribution & Design
+## Contribution & Design
 This project follows a **Modular Monolith** architecture with a strong emphasis on the **Controller-Service-Repository** pattern, ensuring high maintainability and scalability.
 
-Built with ❤️ for community progress.
+Built with passion for community progress.

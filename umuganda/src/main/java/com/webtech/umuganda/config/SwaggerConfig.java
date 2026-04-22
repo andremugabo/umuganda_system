@@ -22,20 +22,20 @@ public class SwaggerConfig {
                                                 .description("REST API for managing Umuganda activities, attendance, and notifications in Rwanda.")
                                                 .version("v1.0")
                                                 .contact(new Contact()
-                                                                .name("WebTech Rwanda")
-                                                                .email("support@webtech.rw")
-                                                                .url("https://webtech.rw"))
+                                                                .name("Mugabo Andre")
+                                                                .email("mugaboandre@gmail.com")
+                                                                .url("https://andremugabo.rw"))
                                                 .license(new License()
                                                                 .name("Apache 2.0")
                                                                 .url("https://springdoc.org")))
                                 .externalDocs(new ExternalDocumentation()
                                                 .description("Project Repository")
-                                                .url("https://github.com/your-repo/umuganda-system"))
+                                                .url("https://github.com/andremugabo/umuganda_system"))
                                 .servers(List.of(
                                                 new Server().url("http://localhost:9090").description("Local Server"),
                                                 new Server().url("https://umuganda-backend-k32m.onrender.com")
                                                                 .description("Render Server"),
-                                                new Server().url("https://api.umuganda.rw")
+                                                new Server().url("https://umuganda-backend-k32m.onrender.com/api")
                                                                 .description("Production Server")));
         }
 }

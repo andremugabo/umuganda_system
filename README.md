@@ -11,8 +11,10 @@ The **Umuganda Management System** is a comprehensive digital platform designed 
 ## Key Features
 
 ### Modern Authentication & Security
-- **Role-Based Access Control (RBAC)**: Personalized dashboards for Administrators, Local Leaders, and Villagers.
-- **Secure Auth**: UUID-based session management and encrypted password storage.
+- **Role-Based Access Control (RBAC)**: Personalized dashboards for Administrators (ADMIN), Local Leaders (CHEF/SOCIAL), and Villagers.
+- **Stateless JWT Security**: Industry-standard **JSON Web Tokens** for secure, scalable authentication.
+- **Enterprise-Grade Encryption**: **BCrypt** industrial-strength password hashing with automated salt generation.
+
 
 ### Event Lifecycle Management
 - **Smart Scheduling**: Effortlessly plan and publish Umuganda activities across different locations.
@@ -47,7 +49,8 @@ The **Umuganda Management System** is a comprehensive digital platform designed 
 - **Framework**: Spring Boot 3.x
 - **Language**: Java 17
 - **Database**: PostgreSQL
-- **Security**: jbcrypt & UUID Token Auth
+- **Security**: Spring Security 6, JWT, & BCrypt
+
 - **Documentation**: Swagger/OpenAPI (SpringDoc)
 - **Tooling**: Maven, Lombok
 
@@ -158,7 +161,7 @@ The system uses environment variables for flexible configuration. You can custom
 
 ---
 
-## Advanced Modernization (v2.0 Highlights)
+## Advanced Modernization
 
 The system recently underwent a comprehensive modernization phase to meet enterprise SaaS standards:
 

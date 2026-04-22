@@ -9,6 +9,7 @@ import com.webtech.umuganda.core.user.model.Users;
 import com.webtech.umuganda.core.user.repository.UsersRepository;
 import com.webtech.umuganda.security.JwtProvider;
 import com.webtech.umuganda.util.utilClass.MailService;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import lombok.RequiredArgsConstructor;
@@ -97,10 +98,10 @@ public class UsersServiceImpl implements UsersService {
     @Override
     public AuthResponseDto login(LoginRequestDto dto) {
         Users user = usersRepository.findByEmail(dto.getEmail())
-                .orElseThrow(() -> new RuntimeException("Invalid credentials"));
+                .orElseThrow(() -> new BadCredentialsException("Invalid credentials"));
 
         if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
-            throw new RuntimeException("Invalid credentials");
+            throw new BadCredentialsException("Invalid credentials");
         }
 
         // Generate a real JWT token with role claim

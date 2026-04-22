@@ -223,11 +223,11 @@ public class DataSeeder {
 
     private void seedUser(String firstName, String lastName, String email, String phone,
                           ERole role, String locationRef, String hashedPassword) {
-        if (usersRepository.findByEmail(email).isPresent()) return;
+        
+        Users user = usersRepository.findByEmail(email).orElseGet(Users::new);
 
         Locations location = locationRepository.findByRef(locationRef).orElse(null);
 
-        Users user = new Users();
         user.setFirstName(firstName);
         user.setLastName(lastName);
         user.setEmail(email);

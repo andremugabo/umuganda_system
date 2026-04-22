@@ -24,6 +24,9 @@ public class LocationServiceImpl implements LocationService {
         location.setName(dto.getName());
         location.setType(dto.getType());
         location.setRef(dto.getRef());
+        location.setLatitude(dto.getLatitude());
+        location.setLongitude(dto.getLongitude());
+
 
         if (dto.getParentId() != null) {
             Locations parent = locationRepository.findById(dto.getParentId())
@@ -43,6 +46,9 @@ public class LocationServiceImpl implements LocationService {
         location.setName(dto.getName());
         location.setType(dto.getType());
         location.setRef(dto.getRef());
+        location.setLatitude(dto.getLatitude());
+        location.setLongitude(dto.getLongitude());
+
 
         if (dto.getParentId() != null) {
             Locations parent = locationRepository.findById(dto.getParentId())
@@ -103,7 +109,10 @@ public class LocationServiceImpl implements LocationService {
                 location.getName(),
                 location.getType(),
                 location.getRef(),
-                parentId
+                parentId,
+                location.getLatitude(),
+                location.getLongitude()
         );
+
     }
 }

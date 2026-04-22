@@ -28,4 +28,8 @@ public class LocationDto {
 
     // Optional: null if top-level location
     private UUID parentId;
+
+    private Double latitude;
+    private Double longitude;
 }
+

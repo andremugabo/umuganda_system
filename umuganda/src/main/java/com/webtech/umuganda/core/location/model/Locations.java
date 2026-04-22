@@ -39,9 +39,16 @@ public class Locations extends AbstractBaseEntity {
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
     private List<Locations> children;
 
+    @Column(name = "latitude")
+    private Double latitude;
+
+    @Column(name = "longitude")
+    private Double longitude;
+
     /**
      * Relationship with Users (citizens)
      */
     @OneToMany(mappedBy = "location")
     private List<Users> usersList;
+
 }

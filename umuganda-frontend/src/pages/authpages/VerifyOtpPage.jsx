@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -23,7 +23,7 @@ const VerifyOtpPage = () => {
     const email = location.state?.email;
     const type = location.state?.type || 'reset'; // 'reset' or 'signup'
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (!email) {
             toast.error('Email not found. Please restart the process.');
             navigate(type === 'signup' ? '/signup' : '/forgot-password');

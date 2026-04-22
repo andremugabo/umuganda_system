@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { 
@@ -52,7 +52,7 @@ const Topbar = ({ toggleSidebar, title }) => {
             const url = `/${paths.slice(0, index + 1).join('/')}`;
             const isLast = index === paths.length - 1;
             return (
-                <React.Fragment key={path}>
+                <Fragment key={path}>
                     <ChevronRight className="w-3 h-3 mx-1 text-gray-400" />
                     {isLast ? (
                         <span className="capitalize font-bold text-gray-800">
@@ -63,7 +63,7 @@ const Topbar = ({ toggleSidebar, title }) => {
                             {path.replace('-', ' ')}
                         </Link>
                     )}
-                </React.Fragment>
+                </Fragment>
             );
         });
     };

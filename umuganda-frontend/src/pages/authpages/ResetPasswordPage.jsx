@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -26,7 +26,7 @@ const ResetPasswordPage = () => {
     const [isLoading, setIsLoading] = useState(false);
     const { email, otp } = location.state || {};
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (!email || !otp) {
             toast.error('Missing reset information. Please start over.');
             navigate('/forgot-password');

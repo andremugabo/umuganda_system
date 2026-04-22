@@ -2,7 +2,7 @@
 
 [![Project Logo](./Images/3c267e7f-20c8-4ff8-861f-3ebc710eedab.jpg)](./Images/3c267e7f-20c8-4ff8-861f-3ebc710eedab.jpg)
 
-### *Twese Hamwe, Buri Kagero — Empowering Communities through Digital Coordination*
+### *Twese Hamwe, Buri Kigero — Empowering Communities through Digital Coordination*
 
 The **Umuganda Management System** is a comprehensive digital platform designed to streamline and modernize the coordination of *Umuganda*—Rwanda's traditional community work. By replacing manual processes with a robust, data-driven solution, the system ensures better event planning, automated attendance tracking, and seamless communication between local leaders and citizens.
 

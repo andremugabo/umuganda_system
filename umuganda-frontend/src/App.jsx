@@ -17,7 +17,7 @@ import ResetPasswordPage from './pages/authpages/ResetPasswordPage';
 import VillagerDashboard from './pages/villagerpages/VillagerDashboard';
 import VillagerUmuganda from './pages/villagerpages/VillagerUmuganda';
 import VillagerAttendance from './pages/villagerpages/VillagerAttendance';
-import VillagerProfile from './pages/villagerpages/VillagerProfile';
+import ProfilePage from './pages/ProfilePage';
 import AdminDashboard from './pages/adminpages/AdminDashboard';
 import UsersManagement from './pages/adminpages/UsersManagement';
 import LocationsManagement from './pages/adminpages/LocationsManagement';
@@ -25,6 +25,7 @@ import UmugandaManagement from './pages/adminpages/UmugandaManagement';
 import AttendanceManagement from './pages/adminpages/AttendanceManagement';
 import NotificationsPage from './pages/NotificationsPage';
 import NotFound from './pages/NotFound';
+
 
 function App() {
   return (
@@ -48,11 +49,15 @@ function App() {
           <Route path="/admin/umuganda" element={<UmugandaManagement />} />
           <Route path="/admin/attendance" element={<AttendanceManagement />} />
           <Route path="/admin/notifications" element={<NotificationsPage />} />
+          <Route path="/admin/profile" element={<ProfilePage />} />
+
+          <Route path="/chef/profile" element={<ProfilePage />} />
+          <Route path="/social/profile" element={<ProfilePage />} />
 
           <Route path="/villager/dashboard" element={<VillagerDashboard />} />
           <Route path="/villager/umuganda" element={<VillagerUmuganda />} />
           <Route path="/villager/attendance" element={<VillagerAttendance />} />
-          <Route path="/villager/profile" element={<VillagerProfile />} />
+          <Route path="/villager/profile" element={<ProfilePage />} />
           <Route path="/villager/notifications" element={<NotificationsPage />} />
 
           {/* Generic notification route for all roles */}

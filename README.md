@@ -90,35 +90,39 @@ The **Umuganda Management System** is a comprehensive digital platform designed 
 
 Experience the intuitive and modern interface designed for both administrators and citizens.
 
-### **1. Admin Intelligence Dashboard**
+### **1. Secure Authentication Portal**
+A clean and intuitive entry point providing secure, role-based access for Administrators, Local Leaders, and Citizens.
+![Login Page](screenshort/loginpage.png)
+
+### **2. Admin Intelligence Dashboard**
 A powerful oversight portal featuring real-time statistics, registration trends, and geographic distribution mapping of community activities.
 ![Admin Dashboard](screenshort/AdminDashboard.png)
 
-### **2. Personalized Villager Experience**
+### **3. Personalized Villager Experience**
 A clean, focused dashboard for citizens to view their upcoming Umuganda tasks and track their personalized attendance history.
 ![Villager Dashboard](screenshort/VillagerDashboard.png)
 
-### **3. Collaborative Umuganda Management**
+### **4. Collaborative Umuganda Management**
 Tools for leaders to schedule, describe, and coordinate community work events across different administrative levels.
 ![Umuganda Management](screenshort/AdminUmugandaManagement.png)
 
-### **4. Digital Attendance Tracking**
+### **5. Digital Attendance Tracking**
 Automated record-keeping system with filtering and CSV/PDF export capabilities for verified participation history.
 ![Attendance Management](screenshort/AdminAttendance.png)
 
-### **5. Hierarchical Location Governance**
+### **6. Hierarchical Location Governance**
 Management of Rwanda's administrative hierarchy, ensuring tasks and leaders are perfectly aligned with their specific villages.
 ![Location Management](screenshort/AdminLocation.png)
 
-### **6. Unified Citizen Registry**
+### **7. Unified Citizen Registry**
 Secure and efficient management of user profiles, role assignments, and location-based administration.
 ![User Management](screenshort/Adminusermanagement.png)
 
-### **7. Enterprise Audit Trail**
+### **8. Enterprise Audit Trail**
 Complete accountability through a dedicated portal tracking every administrative action and system change.
 ![System Audit Logs](screenshort/SystemAuditLog.png)
 
-### **8. Interactive API Ecosystem (Swagger)**
+### **9. Interactive API Ecosystem (Swagger)**
 Fully documented backend with interactive Swagger UI, allowing developers to explore and test endpoints in real-time.
 ![Swagger Documentation](screenshort/Swagger.png)
 

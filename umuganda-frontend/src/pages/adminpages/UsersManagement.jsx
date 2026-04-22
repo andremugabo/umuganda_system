@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import Pagination from '../../components/ui/Pagination';
+
 import {
     Users,
     Search,
@@ -25,8 +27,10 @@ import { exportToCSV } from '../../utils/exportUtils';
 
 
 const UsersManagement = () => {
+    const { user: currentUser } = useSelector((state) => state.auth);
     const [users, setUsers] = useState([]);
     const [filteredUsers, setFilteredUsers] = useState([]);
+
     const [villages, setVillages] = useState([]); // This might still be needed for initial map
     const [locationMap, setLocationMap] = useState({});
     const [isLoading, setIsLoading] = useState(true);
@@ -74,13 +78,17 @@ const UsersManagement = () => {
     const fetchInitialData = async () => {
         try {
             setIsLoading(true);
-            const [userData, locationData] = await Promise.all([
-                userService.getAllUsers(),
-                locationService.getAllLocations()
-            ]);
+            let userData = await userService.getAllUsers();
+            const locationData = await locationService.getAllLocations();
+
+            // Role-based filtering: Chefs only see their village
+            if (currentUser?.role === 'VILLAGE_CHEF') {
+                userData = userData.filter(u => u.locationId === currentUser.locationId);
+            }
 
             setUsers(userData);
             setFilteredUsers(userData);
+
 
             const map = {};
             // Build a lookup map for quick access
@@ -103,16 +111,25 @@ const UsersManagement = () => {
             });
             setLocationMap(map);
         } catch (error) {
+            console.error("[UsersManagement] Fetch Error:", error);
             toast.error("Failed to load initial data");
         } finally {
             setIsLoading(false);
         }
     };
 
+
     const fetchUsers = async () => {
         try {
-            const data = await userService.getAllUsers();
+            let data = await userService.getAllUsers();
+            
+            // Re-apply role-based filtering
+            if (currentUser?.role === 'VILLAGE_CHEF') {
+                data = data.filter(u => u.locationId === currentUser.locationId);
+            }
+
             setUsers(data);
+
         } catch (error) {
             toast.error("Failed to refresh users");
         }
@@ -194,6 +211,31 @@ const UsersManagement = () => {
             </div>
         );
     }
+
+    // Role-based data availability check
+    const isLocalLeader = currentUser?.role === 'VILLAGE_CHEF' || currentUser?.role === 'VILLAGE_SOCIAL';
+    const hasNoLocation = isLocalLeader && !currentUser?.locationId;
+
+    if (hasNoLocation) {
+        return (
+            <div className="bg-amber-50 border-2 border-amber-200 p-10 rounded-3xl text-center space-y-4 animate-in zoom-in duration-300">
+                <div className="w-16 h-16 bg-amber-100 rounded-2xl flex items-center justify-center mx-auto text-amber-600">
+                    <MapPin className="w-8 h-8" />
+                </div>
+                <h2 className="text-2xl font-bold text-amber-900">Registry Access Restricted</h2>
+                <p className="text-amber-700 max-w-md mx-auto font-medium">
+                    To manage citizens, your account must be assigned to a specific village. 
+                    Please contact an **Administrator** to update your profile.
+                </p>
+                <div className="pt-4">
+                    <button onClick={() => window.location.reload()} className="px-6 py-2 bg-amber-600 text-white rounded-xl hover:bg-amber-700 transition-all font-bold">
+                        Retry Access
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
 
     return (
         <div className="space-y-6 animate-in fade-in duration-500">

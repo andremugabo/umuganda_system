@@ -18,6 +18,8 @@ import umugandaService from '../../services/umugandaService';
 import userService from '../../services/userService';
 import locationService from '../../services/locationService';
 import { toast } from 'react-toastify';
+import { exportToCSV } from '../../utils/exportUtils';
+
 
 const AttendanceManagement = () => {
     const [events, setEvents] = useState([]);
@@ -32,6 +34,38 @@ const AttendanceManagement = () => {
     // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(10);
+    const [isExporting, setIsExporting] = useState(false);
+
+    const handleExport = () => {
+        if (!selectedEvent || attendanceRecords.length === 0) {
+            toast.warn("No attendance data to export for this event");
+            return;
+        }
+
+        setIsExporting(true);
+        try {
+            const dataToExport = attendanceRecords.map(r => {
+                const user = users[r.userId];
+                return {
+                    eventId: r.umugandaId,
+                    event: selectedEvent.description,
+                    date: new Date(selectedEvent.date).toLocaleDateString(),
+                    citizenName: user ? `${user.firstName} ${user.lastName}` : 'Unknown',
+                    email: user?.email || 'N/A',
+                    phone: user?.phone || 'N/A',
+                    village: user ? locationMap[user.locationId] : 'N/A',
+                    attendance: r.attendance
+                };
+            });
+            exportToCSV(dataToExport, `attendance_report_${selectedEvent.id.substring(0, 8)}`);
+            toast.success("Attendance report exported successfully");
+        } catch (error) {
+            toast.error("Failed to export report");
+        } finally {
+            setIsExporting(false);
+        }
+    };
+
 
     useEffect(() => {
         fetchInitialData();
@@ -169,10 +203,15 @@ const AttendanceManagement = () => {
                     <h1 className="text-2xl font-bold text-gray-900">Attendance Management</h1>
                     <p className="text-gray-500 text-sm">Track and manage citizen participation in Umuganda events.</p>
                 </div>
-                <button className="flex items-center justify-center gap-2 bg-rwanda-green text-white px-5 py-2.5 rounded-xl hover:bg-green-600 transition-all font-semibold shadow-lg shadow-green-500/10">
-                    <Download className="w-5 h-5" />
+                <button 
+                    onClick={handleExport}
+                    disabled={isExporting || !selectedEvent}
+                    className="flex items-center justify-center gap-2 bg-rwanda-green text-white px-5 py-2.5 rounded-xl hover:bg-green-600 transition-all font-semibold shadow-lg shadow-green-500/10 disabled:opacity-50 active:scale-95"
+                >
+                    {isExporting ? <Loader2 className="w-5 h-5 animate-spin" /> : <Download className="w-5 h-5" />}
                     Export Report
                 </button>
+
             </div>
 
             {/* Event Selector */}

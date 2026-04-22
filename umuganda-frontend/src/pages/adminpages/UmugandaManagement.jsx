@@ -11,12 +11,15 @@ import {
     Loader2,
     Filter,
     ChevronRight,
-    Users
+    Users,
+    Download
 } from 'lucide-react';
 import umugandaService from '../../services/umugandaService';
 import locationService from '../../services/locationService';
 import { toast } from 'react-toastify';
 import UmugandaModal from '../../components/ui/UmugandaModal';
+import { exportToCSV } from '../../utils/exportUtils';
+
 
 const UmugandaManagement = () => {
     const [events, setEvents] = useState([]);
@@ -32,6 +35,27 @@ const UmugandaManagement = () => {
     // Modal State
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedEvent, setSelectedEvent] = useState(null);
+    const [isExporting, setIsExporting] = useState(false);
+
+    const handleExport = () => {
+        setIsExporting(true);
+        try {
+            const dataToExport = filteredEvents.map(e => ({
+                id: e.id,
+                description: e.description,
+                date: new Date(e.date).toLocaleDateString(),
+                time: new Date(e.date).toLocaleTimeString(),
+                location: locationMap[e.locationId] || 'Unknown'
+            }));
+            exportToCSV(dataToExport, 'umuganda_schedule');
+            toast.success("Schedule exported successfully");
+        } catch (error) {
+            toast.error("Failed to export schedule");
+        } finally {
+            setIsExporting(false);
+        }
+    };
+
 
     useEffect(() => {
         fetchInitialData();
@@ -147,13 +171,24 @@ const UmugandaManagement = () => {
                     <h1 className="text-2xl font-bold text-gray-900 font-bold">Umuganda Management</h1>
                     <p className="text-gray-500 text-sm font-bold">Schedule and manage community work events.</p>
                 </div>
-                <button
-                    onClick={() => { setSelectedEvent(null); setIsModalOpen(true); }}
-                    className="flex items-center justify-center gap-2 bg-rwanda-blue text-white px-5 py-2.5 rounded-xl hover:bg-blue-600 transition-all font-semibold shadow-lg shadow-blue-500/10"
-                >
-                    <Plus className="w-5 h-5" />
-                    Schedule New
-                </button>
+                <div className="flex items-center gap-3">
+                    <button
+                        onClick={handleExport}
+                        disabled={isExporting}
+                        className="flex items-center justify-center gap-2 bg-white border border-gray-100 text-gray-700 px-5 py-2.5 rounded-xl hover:bg-gray-50 transition-all font-semibold shadow-sm active:scale-95 disabled:opacity-50"
+                    >
+                        {isExporting ? <Loader2 className="w-5 h-5 animate-spin" /> : <Download className="w-5 h-5 text-rwanda-blue" />}
+                        Export
+                    </button>
+                    <button
+                        onClick={() => { setSelectedEvent(null); setIsModalOpen(true); }}
+                        className="flex items-center justify-center gap-2 bg-rwanda-blue text-white px-5 py-2.5 rounded-xl hover:bg-blue-600 transition-all font-semibold shadow-lg shadow-blue-500/10 active:scale-95"
+                    >
+                        <Plus className="w-5 h-5" />
+                        Schedule New
+                    </button>
+                </div>
+
             </div>
 
             {/* Filters Bar */}

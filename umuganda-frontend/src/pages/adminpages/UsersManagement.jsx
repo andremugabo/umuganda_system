@@ -12,7 +12,8 @@ import {
     Phone,
     Shield,
     Loader2,
-    MapPin
+    MapPin,
+    Download
 } from 'lucide-react';
 import userService from '../../services/userService';
 import locationService from '../../services/locationService';
@@ -20,6 +21,8 @@ import { toast } from 'react-toastify';
 import EditUserModal from '../../components/ui/EditUserModal';
 import AssignLocationModal from '../../components/ui/AssignLocationModal';
 import AddUserModal from '../../components/ui/AddUserModal';
+import { exportToCSV } from '../../utils/exportUtils';
+
 
 const UsersManagement = () => {
     const [users, setUsers] = useState([]);
@@ -39,6 +42,29 @@ const UsersManagement = () => {
     const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
+    const [isExporting, setIsExporting] = useState(false);
+
+    const handleExport = () => {
+        setIsExporting(true);
+        try {
+            const dataToExport = filteredUsers.map(u => ({
+                id: u.id,
+                firstName: u.firstName,
+                lastName: u.lastName,
+                email: u.email,
+                phone: u.phone || '',
+                role: u.role,
+                location: locationMap[u.locationId] || 'No Village'
+            }));
+            exportToCSV(dataToExport, 'citizen_registry');
+            toast.success("Registry exported successfully");
+        } catch (error) {
+            toast.error("Failed to export registry");
+        } finally {
+            setIsExporting(false);
+        }
+    };
+
 
 
     useEffect(() => {
@@ -177,13 +203,24 @@ const UsersManagement = () => {
                     <h1 className="text-2xl font-bold text-gray-900">Citizen Management</h1>
                     <p className="text-gray-500 text-sm">Manage all users, roles, and community access.</p>
                 </div>
-                <button
-                    onClick={() => setIsAddModalOpen(true)}
-                    className="flex items-center justify-center gap-2 bg-rwanda-blue text-white px-5 py-2.5 rounded-xl hover:bg-blue-600 transition-all font-semibold shadow-lg shadow-blue-500/10"
-                >
-                    <UserPlus className="w-5 h-5" />
-                    Add Member
-                </button>
+                <div className="flex items-center gap-3">
+                    <button
+                        onClick={handleExport}
+                        disabled={isExporting}
+                        className="flex items-center justify-center gap-2 bg-white border border-gray-100 text-gray-700 px-5 py-2.5 rounded-xl hover:bg-gray-50 transition-all font-semibold shadow-sm active:scale-95 disabled:opacity-50"
+                    >
+                        {isExporting ? <Loader2 className="w-5 h-5 animate-spin" /> : <Download className="w-5 h-5 text-rwanda-blue" />}
+                        Export
+                    </button>
+                    <button
+                        onClick={() => setIsAddModalOpen(true)}
+                        className="flex items-center justify-center gap-2 bg-rwanda-blue text-white px-5 py-2.5 rounded-xl hover:bg-blue-600 transition-all font-semibold shadow-lg shadow-blue-500/10 active:scale-95"
+                    >
+                        <UserPlus className="w-5 h-5" />
+                        Add Member
+                    </button>
+                </div>
+
             </div>
 
             {/* Filters Bar */}

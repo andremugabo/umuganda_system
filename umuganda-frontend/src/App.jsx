@@ -19,7 +19,10 @@ import ResetPasswordPage from './pages/authpages/ResetPasswordPage';
 import VillagerDashboard from './pages/villagerpages/VillagerDashboard';
 import VillagerUmuganda from './pages/villagerpages/VillagerUmuganda';
 import VillagerAttendance from './pages/villagerpages/VillagerAttendance';
+import ChefDashboard from './pages/chefpages/ChefDashboard';
+import SocialDashboard from './pages/socialpages/SocialDashboard';
 import ProfilePage from './pages/ProfilePage';
+
 import AdminDashboard from './pages/adminpages/AdminDashboard';
 import UsersManagement from './pages/adminpages/UsersManagement';
 import LocationsManagement from './pages/adminpages/LocationsManagement';
@@ -49,25 +52,42 @@ function App() {
 
         {/* Dashboard Routes (Protected by DashboardLayout) */}
         <Route element={<DashboardLayout />}>
-          {/* Admin Restricted Routes */}
-          <Route element={<RoleRoute allowedRoles={['ADMIN']} />}>
+          {/* Shared Management Routes (Admin & Local Leaders) */}
+          <Route element={<RoleRoute allowedRoles={['ADMIN', 'VILLAGE_CHEF']} />}>
             <Route path="/admin/users" element={<UsersManagement />} />
+            <Route path="/chef/users" element={<UsersManagement />} />
+          </Route>
+
+          <Route element={<RoleRoute allowedRoles={['ADMIN', 'VILLAGE_CHEF', 'VILLAGE_SOCIAL']} />}>
+            <Route path="/admin/umuganda" element={<UmugandaManagement />} />
+            <Route path="/admin/attendance" element={<AttendanceManagement />} />
+            <Route path="/chef/umuganda" element={<UmugandaManagement />} />
+            <Route path="/chef/attendance" element={<AttendanceManagement />} />
+            <Route path="/social/umuganda" element={<UmugandaManagement />} />
+            <Route path="/social/attendance" element={<AttendanceManagement />} />
+          </Route>
+
+          {/* Admin-Only Restricted Routes */}
+          <Route element={<RoleRoute allowedRoles={['ADMIN']} />}>
             <Route path="/admin/locations" element={<LocationsManagement />} />
             <Route path="/admin/logs" element={<AuditLogsPage />} />
             <Route path="/admin/settings" element={<SystemSettingsPage />} />
           </Route>
 
+
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
-          <Route path="/admin/umuganda" element={<UmugandaManagement />} />
-          <Route path="/admin/attendance" element={<AttendanceManagement />} />
           <Route path="/admin/notifications" element={<NotificationsPage />} />
           <Route path="/admin/profile" element={<ProfilePage />} />
 
-
-
-
+          <Route path="/chef/dashboard" element={<ChefDashboard />} />
+          <Route path="/chef/reports" element={<AdminDashboard />} /> {/* Placeholder for reports */}
           <Route path="/chef/profile" element={<ProfilePage />} />
+          
+          <Route path="/social/dashboard" element={<SocialDashboard />} />
+          <Route path="/social/notifications" element={<NotificationsPage />} />
           <Route path="/social/profile" element={<ProfilePage />} />
+
+
 
           <Route path="/villager/dashboard" element={<VillagerDashboard />} />
           <Route path="/villager/umuganda" element={<VillagerUmuganda />} />

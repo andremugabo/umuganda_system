@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
 
     Users,
@@ -33,6 +34,7 @@ import LocationMap from '../../components/ui/LocationMap';
 import { generatePDFReport } from '../../utils/pdfExportUtils';
 import { FileText } from 'lucide-react';
 const AdminDashboard = () => {
+    const navigate = useNavigate();
     const [stats, setStats] = useState({
         totalUsers: 0,
         totalLocations: 0,
@@ -167,7 +169,10 @@ const AdminDashboard = () => {
                         Export PDF Summary
 
                     </button>
-                    <button className="flex items-center justify-center gap-2 bg-rwanda-blue text-white px-6 py-3 rounded-xl hover:bg-blue-600 transition-all shadow-lg shadow-blue-500/20 font-semibold active:scale-95">
+                    <button 
+                        onClick={() => navigate('/admin/umuganda')}
+                        className="flex items-center justify-center gap-2 bg-rwanda-blue text-white px-6 py-3 rounded-xl hover:bg-blue-600 transition-all shadow-lg shadow-blue-500/20 font-semibold active:scale-95"
+                    >
                         <Plus className="w-5 h-5" />
                         Plan New Umuganda
                     </button>

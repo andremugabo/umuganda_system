@@ -28,7 +28,10 @@ import {
 } from 'recharts';
 import dashboardService from '../../services/dashboardService';
 import { toast } from 'react-toastify';
-
+import Skeleton, { CardSkeleton, ChartSkeleton } from '../../components/ui/Skeleton';
+import LocationMap from '../../components/ui/LocationMap';
+import { generatePDFReport } from '../../utils/pdfExportUtils';
+import { FileText } from 'lucide-react';
 const AdminDashboard = () => {
     const [stats, setStats] = useState({
         totalUsers: 0,
@@ -105,11 +108,45 @@ const AdminDashboard = () => {
         { label: 'Umuganda Planned', value: stats.totalEvents, icon: Calendar, color: 'text-rwanda-yellow', bg: 'bg-rwanda-yellow/10', trend: '+5%' },
     ];
 
+    const handleExportPDF = () => {
+        const columns = ['Record ID', 'Name', 'Email', 'Role', 'Status'];
+        const data = stats.allUsers.map(u => [
+            u.id.substring(0, 8),
+            `${u.firstName} ${u.lastName}`,
+            u.email,
+            u.role,
+            'ACTIVE'
+        ]);
+        generatePDFReport(data, 'National Citizens Briefing', columns, 'citizens_briefing.pdf');
+    };
+
     if (isLoading) {
+
         return (
-            <div className="flex items-center justify-center min-h-[400px]">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-rwanda-blue"></div>
+            <div className="space-y-8 animate-in fade-in duration-500">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div className="space-y-2">
+                        <Skeleton className="w-64 h-8" />
+                        <Skeleton className="w-48 h-4 mt-2" />
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <CardSkeleton />
+                    <CardSkeleton />
+                    <CardSkeleton />
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <ChartSkeleton />
+                    <ChartSkeleton />
+                </div>
+
+                <div className="h-[500px]">
+                    <Skeleton className="w-full h-full rounded-3xl" />
+                </div>
             </div>
+
         );
     }
 
@@ -121,11 +158,22 @@ const AdminDashboard = () => {
                     <h1 className="text-3xl font-bold text-gray-900 tracking-tight">System Overview</h1>
                     <p className="text-gray-500 mt-1">Monitor all national activities and users across Rwanda.</p>
                 </div>
-                <button className="flex items-center justify-center gap-2 bg-rwanda-blue text-white px-6 py-3 rounded-xl hover:bg-blue-600 transition-all shadow-lg shadow-blue-500/20 font-semibold active:scale-95">
-                    <Plus className="w-5 h-5" />
-                    Plan New Umuganda
-                </button>
+                <div className="flex flex-wrap gap-3">
+                    <button 
+                        onClick={handleExportPDF}
+                        className="flex items-center justify-center gap-2 bg-white border-2 border-gray-100 text-gray-700 px-5 py-3 rounded-xl hover:border-rwanda-blue hover:text-rwanda-blue transition-all font-semibold active:scale-95"
+                    >
+                        <FileText className="w-5 h-5" />
+                        Export PDF Summary
+
+                    </button>
+                    <button className="flex items-center justify-center gap-2 bg-rwanda-blue text-white px-6 py-3 rounded-xl hover:bg-blue-600 transition-all shadow-lg shadow-blue-500/20 font-semibold active:scale-95">
+                        <Plus className="w-5 h-5" />
+                        Plan New Umuganda
+                    </button>
+                </div>
             </div>
+
 
             {/* Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -240,8 +288,17 @@ const AdminDashboard = () => {
                 </div>
             </div>
 
+            {/* Geographic Insight */}
+            <div className="grid grid-cols-1 gap-8 mb-8">
+                <LocationMap 
+                    locations={stats.allUsers.map(u => ({ id: u.id, name: `${u.firstName} ${u.lastName}`, type: u.role }))} 
+                    title="Citizens Geographic Distribution"
+                />
+            </div>
+
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
                 {/* Recent Users Table */}
                 <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
                     <div className="p-6 border-b border-gray-50 flex items-center justify-between">

@@ -82,6 +82,18 @@ The **Umuganda Management System** is a comprehensive digital platform designed 
 - PostgreSQL (if running locally without Docker)
 - Docker (optional, for containerized run)
 
+### Running with Docker Compose
+
+For the easiest setup, you can run the entire Umuganda System (Backend, Frontend, and Database) using Docker Compose:
+
+```bash
+docker-compose up --build
+```
+
+- **Frontend**: http://localhost:5173
+- **Backend API**: http://localhost:9090
+- **Database**: Port 5433 (on host)
+
 ### Running Locally
 
 **Backend:**

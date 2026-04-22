@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: umuganda-db
+    environment:
+      POSTGRES_DB: umuganda_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: ./umuganda
+      dockerfile: Dockerfile
+    container_name: umuganda-backend
+    ports:
+      - "9090:9090"
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=umuganda_db
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=123
+    depends_on:
+      - db
+
+  frontend:
+    build:
+      context: ./umuganda-frontend
+      dockerfile: Dockerfile
+    container_name: umuganda-frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:

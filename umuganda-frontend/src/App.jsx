@@ -6,6 +6,8 @@ import './App.css';
 // Layouts
 import AuthLayout from './components/ui/AuthLayout';
 import DashboardLayout from './components/ui/DashboardLayout';
+import RoleRoute from './components/ui/RoleRoute';
+
 
 // Pages
 import LoginPage from './pages/authpages/LoginPage';
@@ -24,7 +26,11 @@ import LocationsManagement from './pages/adminpages/LocationsManagement';
 import UmugandaManagement from './pages/adminpages/UmugandaManagement';
 import AttendanceManagement from './pages/adminpages/AttendanceManagement';
 import NotificationsPage from './pages/NotificationsPage';
+import AuditLogsPage from './pages/adminpages/AuditLogsPage';
+import SystemSettingsPage from './pages/adminpages/SystemSettingsPage';
 import NotFound from './pages/NotFound';
+
+
 
 
 function App() {
@@ -43,13 +49,22 @@ function App() {
 
         {/* Dashboard Routes (Protected by DashboardLayout) */}
         <Route element={<DashboardLayout />}>
+          {/* Admin Restricted Routes */}
+          <Route element={<RoleRoute allowedRoles={['ADMIN']} />}>
+            <Route path="/admin/users" element={<UsersManagement />} />
+            <Route path="/admin/locations" element={<LocationsManagement />} />
+            <Route path="/admin/logs" element={<AuditLogsPage />} />
+            <Route path="/admin/settings" element={<SystemSettingsPage />} />
+          </Route>
+
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
-          <Route path="/admin/users" element={<UsersManagement />} />
-          <Route path="/admin/locations" element={<LocationsManagement />} />
           <Route path="/admin/umuganda" element={<UmugandaManagement />} />
           <Route path="/admin/attendance" element={<AttendanceManagement />} />
           <Route path="/admin/notifications" element={<NotificationsPage />} />
           <Route path="/admin/profile" element={<ProfilePage />} />
+
+
+
 
           <Route path="/chef/profile" element={<ProfilePage />} />
           <Route path="/social/profile" element={<ProfilePage />} />

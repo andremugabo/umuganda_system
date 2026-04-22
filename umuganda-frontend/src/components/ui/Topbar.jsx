@@ -152,19 +152,38 @@ const Topbar = ({ toggleSidebar, title }) => {
                             </div>
                             
                             <div className="space-y-1 px-2">
-                                <Link 
-                                    to={`/${user?.role?.toLowerCase().replace('_', '')}/profile`} 
-                                    className="flex items-center gap-3 px-4 py-3 text-sm font-bold text-gray-600 hover:text-rwanda-blue hover:bg-rwanda-blue/5 rounded-2xl transition-all group"
-                                    onClick={() => setDropdownOpen(false)}
-                                >
+                                {(() => {
+                                    const getProfilePath = () => {
+                                        const role = user?.role;
+                                        if (role === 'ADMIN') return '/admin/profile';
+                                        if (role === 'VILLAGE_CHEF') return '/chef/profile';
+                                        if (role === 'VILLAGE_SOCIAL') return '/social/profile';
+                                        return '/villager/profile';
+                                    };
+                                    const profilePath = getProfilePath();
+                                    
+                                    return (
+                                        <>
+                                            <Link 
+                                                to={profilePath} 
+                                                className="flex items-center gap-3 px-4 py-3 text-sm font-bold text-gray-600 hover:text-rwanda-blue hover:bg-rwanda-blue/5 rounded-2xl transition-all group"
+                                                onClick={() => setDropdownOpen(false)}
+                                            >
+                                                <User className="w-5 h-5 text-gray-400 group-hover:text-rwanda-blue" />
+                                                My Profile
+                                            </Link>
+                                            <Link 
+                                                to={user?.role === 'ADMIN' ? '/admin/settings' : profilePath}
+                                                className="flex items-center gap-3 px-4 py-3 text-sm font-bold text-gray-600 hover:text-rwanda-blue hover:bg-rwanda-blue/5 rounded-2xl transition-all group"
+                                                onClick={() => setDropdownOpen(false)}
+                                            >
+                                                <Settings className="w-5 h-5 text-gray-400 group-hover:text-rwanda-blue" />
+                                                {user?.role === 'ADMIN' ? 'System Settings' : 'Account Settings'}
+                                            </Link>
 
-                                    <User className="w-5 h-5 text-gray-400 group-hover:text-rwanda-blue" />
-                                    My Profile
-                                </Link>
-                                <button className="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-gray-600 hover:text-rwanda-blue hover:bg-rwanda-blue/5 rounded-2xl transition-all group">
-                                    <Settings className="w-5 h-5 text-gray-400 group-hover:text-rwanda-blue" />
-                                    Account Settings
-                                </button>
+                                        </>
+                                    );
+                                })()}
                                 <div className="h-px bg-gray-50 my-2 mx-4" />
                                 <button 
                                     onClick={onLogout}
@@ -174,6 +193,7 @@ const Topbar = ({ toggleSidebar, title }) => {
                                     Sign Out
                                 </button>
                             </div>
+
                         </div>
                     )}
                 </div>

@@ -6,8 +6,12 @@ import {
     CheckSquare,
     Bell,
     BarChart,
-    UserCircle
+    UserCircle,
+    Shield,
+    Settings
 } from 'lucide-react';
+
+
 
 export const sidebarConfig = {
     ADMIN: [
@@ -16,9 +20,12 @@ export const sidebarConfig = {
         { label: 'Locations', path: '/admin/locations', icon: MapPin },
         { label: 'Umuganda Events', path: '/admin/umuganda', icon: Calendar },
         { label: 'Attendance', path: '/admin/attendance', icon: CheckSquare },
+        { label: 'System Logs', path: '/admin/logs', icon: Shield },
         { label: 'Notifications', path: '/admin/notifications', icon: Bell },
+        { label: 'System Settings', path: '/admin/settings', icon: Settings },
         { label: 'Profile', path: '/admin/profile', icon: UserCircle },
     ],
+
     VILLAGE_CHEF: [
         { label: 'Dashboard', path: '/chef/dashboard', icon: LayoutDashboard },
         { label: 'Village Users', path: '/chef/users', icon: Users },

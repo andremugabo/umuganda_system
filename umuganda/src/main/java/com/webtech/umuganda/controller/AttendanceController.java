@@ -11,11 +11,15 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+
 @RestController
 @RequestMapping("/api/attendance")
 @RequiredArgsConstructor
 @Tag(name = "Attendance", description = "APIs for managing attendance")
+@PreAuthorize("hasAnyRole('ADMIN', 'VILLAGE_CHEF', 'VILLAGE_SOCIAL')")
 public class AttendanceController {
+
 
     private final AttendanceService service;
 

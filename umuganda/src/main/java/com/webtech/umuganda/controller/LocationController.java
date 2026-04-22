@@ -12,12 +12,15 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 @RestController
 @RequestMapping("/api/locations")
 @RequiredArgsConstructor
 @Tag(name = "Locations", description = "Endpoints for managing hierarchical locations in Umuganda")
+@PreAuthorize("hasRole('ADMIN')")
 public class LocationController {
+
 
     private final LocationService locationService;
 

@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
+import org.springframework.security.access.prepost.PreAuthorize;
+
 
 @RestController
 @RequestMapping("/api/umuganda")
@@ -21,15 +23,19 @@ public class UmugandaController {
 
     @Operation(summary = "Create a new Umuganda")
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'VILLAGE_CHEF', 'VILLAGE_SOCIAL')")
     public ResponseEntity<UmugandaDto> createUmuganda(@RequestBody UmugandaDto dto) {
         return ResponseEntity.ok(service.createUmuganda(dto));
     }
 
+
     @Operation(summary = "Update an existing Umuganda")
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'VILLAGE_CHEF', 'VILLAGE_SOCIAL')")
     public ResponseEntity<UmugandaDto> updateUmuganda(@PathVariable UUID id, @RequestBody UmugandaDto dto) {
         return ResponseEntity.ok(service.updateUmuganda(id, dto));
     }
+
 
     @Operation(summary = "Get Umuganda by ID")
     @GetMapping("/{id}")
@@ -51,8 +57,10 @@ public class UmugandaController {
 
     @Operation(summary = "Delete Umuganda by ID")
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'VILLAGE_CHEF', 'VILLAGE_SOCIAL')")
     public ResponseEntity<Void> deleteUmuganda(@PathVariable UUID id) {
         service.deleteUmuganda(id);
         return ResponseEntity.noContent().build();
     }
+
 }

@@ -18,7 +18,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 @RequestMapping("/api/locations")
 @RequiredArgsConstructor
 @Tag(name = "Locations", description = "Endpoints for managing hierarchical locations in Umuganda")
-@PreAuthorize("hasRole('ADMIN')")
 public class LocationController {
 
 
@@ -26,6 +25,7 @@ public class LocationController {
 
     @Operation(summary = "Create a new location", description = "Create a new location (Province, District, Sector, ...)")
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<LocationDto> createLocation(@Valid @RequestBody LocationDto dto) {
         LocationDto created = locationService.createLocation(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
@@ -33,6 +33,7 @@ public class LocationController {
 
     @Operation(summary = "Update an existing location", description = "Update location details by ID")
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<LocationDto> updateLocation(
             @PathVariable UUID id,
             @Valid @RequestBody LocationDto dto) {
@@ -42,12 +43,14 @@ public class LocationController {
 
     @Operation(summary = "Get all locations", description = "Retrieve all locations")
     @GetMapping
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<LocationDto>> getAllLocations() {
         return ResponseEntity.ok(locationService.getAllLocations());
     }
 
     @Operation(summary = "Get a location by ID", description = "Retrieve a single location by its UUID")
     @GetMapping("/{id}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<LocationDto> getLocationById(@PathVariable UUID id) {
         LocationDto dto = locationService.getLocationById(id);
         return ResponseEntity.ok(dto);
@@ -55,6 +58,7 @@ public class LocationController {
 
     @Operation(summary = "Get child locations", description = "Retrieve all child locations of a given parent location")
     @GetMapping("/parent/{parentId}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<LocationDto>> getChildren(@PathVariable UUID parentId) {
         List<LocationDto> children = locationService.getChildren(parentId);
         return ResponseEntity.ok(children);
@@ -62,6 +66,7 @@ public class LocationController {
 
     @Operation(summary = "Get locations by type", description = "Retrieve all locations by type (e.g., PROVINCE, DISTRICT, SECTOR)")
     @GetMapping("/type/{type}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<LocationDto>> getByType(@PathVariable String type) {
         List<LocationDto> locations = locationService.getByType(type.toUpperCase());
         return ResponseEntity.ok(locations);
@@ -69,6 +74,7 @@ public class LocationController {
 
     @Operation(summary = "Delete a location", description = "Delete a location by ID")
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteLocation(@PathVariable UUID id) {
         locationService.deleteLocation(id);
         return ResponseEntity.noContent().build();

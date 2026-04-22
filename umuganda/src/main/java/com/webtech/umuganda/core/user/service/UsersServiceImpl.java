@@ -7,8 +7,10 @@ import com.webtech.umuganda.core.user.dto.UserRegistrationDto;
 import com.webtech.umuganda.core.user.dto.UsersDto;
 import com.webtech.umuganda.core.user.model.Users;
 import com.webtech.umuganda.core.user.repository.UsersRepository;
+import com.webtech.umuganda.security.JwtProvider;
 import com.webtech.umuganda.util.utilClass.MailService;
-import com.webtech.umuganda.util.utilClass.PasswordUtil;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +29,9 @@ public class UsersServiceImpl implements UsersService {
     private final UsersRepository usersRepository;
     private final LocationRepository locationsRepository;
     private final MailService mailService;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtProvider jwtProvider;
+
 
     // -------------------- Mapping Methods --------------------
 
@@ -60,7 +65,8 @@ public class UsersServiceImpl implements UsersService {
         user.setEmail(dto.getEmail());
         user.setPhone(dto.getPhone());
         user.setRole(dto.getRole());
-        user.setPassword(PasswordUtil.hashPassword(dto.getPassword())); // HASH password with SHA-256
+        user.setPassword(passwordEncoder.encode(dto.getPassword())); // BCrypt hashing
+
 
         if (dto.getLocationId() != null) {
             locationsRepository.findById(dto.getLocationId())
@@ -93,20 +99,16 @@ public class UsersServiceImpl implements UsersService {
         Users user = usersRepository.findByEmail(dto.getEmail())
                 .orElseThrow(() -> new RuntimeException("Invalid credentials"));
 
-        if (!PasswordUtil.hashPassword(dto.getPassword()).equals(user.getPassword())) {
+        if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
             throw new RuntimeException("Invalid credentials");
         }
 
-        // TODO: Re-enable email verification check for production
-        // if (!user.isVerified()) {
-        // throw new RuntimeException("Please verify your email before logging in");
-        // }
-
-        // Generate a simple temporary token
-        String token = UUID.randomUUID().toString();
+        // Generate a real JWT token with role claim
+        String token = jwtProvider.generateToken(user.getEmail(), user.getRole().name());
 
         return new AuthResponseDto(token, mapToDto(user));
     }
+
 
     @Override
     public UsersDto registerUser(UserRegistrationDto dto) {
@@ -202,8 +204,9 @@ public class UsersServiceImpl implements UsersService {
 
     // -------------------- Optional: Password Check --------------------
     public boolean checkPassword(Users user, String rawPassword) {
-        return PasswordUtil.hashPassword(rawPassword).equals(user.getPassword());
+        return passwordEncoder.matches(rawPassword, user.getPassword());
     }
+
 
     @Override
     public void forgotPassword(String email) {
@@ -262,7 +265,8 @@ public class UsersServiceImpl implements UsersService {
         Users user = usersRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        user.setPassword(PasswordUtil.hashPassword(newPassword));
+        user.setPassword(passwordEncoder.encode(newPassword));
+
         // Clear OTP
         user.setOtpCode(null);
         user.setOtpExpiresAt(null);

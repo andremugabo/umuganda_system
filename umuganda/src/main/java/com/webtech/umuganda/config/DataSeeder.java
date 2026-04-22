@@ -5,8 +5,9 @@ import com.webtech.umuganda.core.location.repository.LocationRepository;
 import com.webtech.umuganda.core.user.model.Users;
 import com.webtech.umuganda.core.user.repository.UsersRepository;
 import com.webtech.umuganda.util.enums.user.ERole;
-import com.webtech.umuganda.util.utilClass.PasswordUtil;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,6 +20,8 @@ public class DataSeeder {
 
     private final UsersRepository usersRepository;
     private final LocationRepository locationRepository;
+    private final PasswordEncoder passwordEncoder;
+
 
     @Bean
     public CommandLineRunner seedData() {
@@ -168,7 +171,8 @@ public class DataSeeder {
     // ─────────────────────────────────────────────
 
     private void seedUsers() {
-        String defaultPassword = PasswordUtil.hashPassword("123456");
+        String defaultPassword = passwordEncoder.encode("123456");
+
 
         // ── ADMIN ──
         seedAdmin("mugaboandre@gmail.com", defaultPassword);

@@ -37,16 +37,25 @@ const DashboardLayout = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 font-sans text-gray-900">
+        <div className="min-h-screen bg-gray-50 font-sans text-gray-900 overflow-x-hidden">
             <Sidebar isOpen={isOpen} toggleSidebar={() => setIsOpen(!isOpen)} />
 
+            {/* Overlay for mobile when sidebar is open */}
+            {isOpen && (
+                <div 
+                    className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40 lg:hidden"
+                    onClick={() => setIsOpen(false)}
+                />
+            )}
+
             <main
-                className={`transition-all duration-300 min-h-screen flex flex-col ${isOpen ? 'pl-64' : 'pl-20'
-                    }`}
+                className={`transition-all duration-300 min-h-screen flex flex-col ${
+                    isOpen ? 'lg:pl-64' : 'lg:pl-20'
+                }`}
             >
                 <Topbar toggleSidebar={() => setIsOpen(!isOpen)} title={getPageTitle()} />
 
-                <div className="flex-1 p-6 lg:p-8">
+                <div className="flex-1 p-4 md:p-6 lg:p-8">
                     <div className="max-w-7xl mx-auto">
                         <Outlet />
                     </div>

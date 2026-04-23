@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@source "./";
 
 @theme {
     --color-rwanda-blue: #00A1DE;

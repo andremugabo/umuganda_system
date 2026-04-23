@@ -70,8 +70,7 @@ public class SecurityConfig {
                 "http://localhost:3000",
                 "http://localhost:9090",
                 "https://umuganda-backend-k32m.onrender.com",
-                "https://umuganda-frontend.onrender.com",
-                "https://umuganda-frontend-k32m.onrender.com"));
+                "https://umuganda-frontend.onrender.com"));
         config.setAllowedHeaders(Arrays.asList("*"));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         source.registerCorsConfiguration("/**", config);

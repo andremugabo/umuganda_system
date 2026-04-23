@@ -87,8 +87,10 @@ The **Umuganda Management System** is a comprehensive digital platform designed 
 ---
 
 ## System Walkthrough & Visuals
-
+ 
 Experience the intuitive and modern interface designed for both administrators and citizens.
+ 
+📺 **[Watch the 4-Minute Technical Walkthrough on Loom](https://www.loom.com/share/02a394e54e0a478da1e4035cedb1b77f)**
 
 ### **1. Secure Authentication Portal**
 A clean and intuitive entry point providing secure, role-based access for Administrators, Local Leaders, and Citizens.

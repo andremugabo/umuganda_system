@@ -29,7 +29,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                     <img src={rwandaFlag} alt="Rwanda Logo" className="w-8 h-8 rounded-full object-cover" />
                     {isOpen && (
                         <span className="font-bold text-xl text-rwanda-blue whitespace-nowrap overflow-hidden">
-                            UmugandaPlus
+                            UmugandaSys
                         </span>
                     )}
                 </div>

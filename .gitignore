@@ -26,4 +26,12 @@ dist-ssr/
 *.ntvs*
 *.njsproj
 *.sln
-*.sw?
+
+# Application Documents & LaTeX
+appli/
+*.aux
+*.out
+*.pdf
+*.toc
+*.log
+*.synctex.gz

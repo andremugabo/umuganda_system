@@ -4,6 +4,10 @@ import './index.css'
 import { Provider } from 'react-redux'
 import { store } from './stores/store'
 import App from './App.jsx'
+import { registerSW } from 'virtual:pwa-register'
+
+// Register Service Worker for PWA
+registerSW({ immediate: true })
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
